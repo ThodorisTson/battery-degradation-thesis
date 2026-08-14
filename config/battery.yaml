@@ -1,0 +1,62 @@
+name: Battery Storage HPP v2.0
+# =================================================================
+# Li-ion battery storage for wind-battery hybrid HPP
+# Sized to match the IEA Wind Task 50 reference site specification.
+# Format follows the SHIPP reference HPP schema.
+# =================================================================
+
+# -----------------------------------------------------------------
+# IDENTIFICATION (informational only - not consumed by the code)
+# -----------------------------------------------------------------
+battery_systems:
+  technology: lithium-ion (utility-scale), prismatic cell # The DEGRADATION physics uses the Xu et al. (2016) model, calibrated for LMO. The COST data is generic utility-scale Li-ion (LFP/NMC) from the catalogue.
+
+  # Live, consumed parameters:
+  energy_capacity: 300000000.0    # [Wh]  300 MWh usable (loader divides by 1e6 to turn it into MWh)
+  power_capacity: 150000000.0     # [W]   150 MW peak charge/discharge (loader divides by 1e6 to turn it into MW)
+  round_trip_efficiency_nominal: 0.95     #DEA DC round-trip, DEA Technology Data catalogue (Li-ion, 2025)
+
+  round_trip_efficiency_0.25C: 0.940      # At quarter-rate charge
+
+  # Documentation only - NOT consumed. Degradation is rainflow + Xu/Shi, not manufacturer cycle-count. Retained as a datasheet reference value.
+  n_full_load_cycles: 4000        # manufacturer cycle life at 100% DoD (informational)
+
+power_conditioning_unit:
+  efficiency: 0.978721   # DEA-implied PCU = sqrt(AC 0.91 / DC 0.95); gives AC round-trip 0.910
+
+n_systems: 1
+
+# -----------------------------------------------------------------
+# OPERATING LIMITS
+# -----------------------------------------------------------------
+operating_limits:
+  soc_min: 0.10 #The maximum depth of discharge is derived in code as d = 1 - soc_min
+  soc_max: 0.90
+  soc_initial: 0.50
+
+# -----------------------------------------------------------------
+# ECONOMICS
+# -----------------------------------------------------------------
+# Source: Danish Technology Catalogue for Energy Storage (June 2024 ed.), technology sheet 180 "Lithium Ion Battery (Utility-scale)".
+#         All values in REAL EUR_2020
+# Vintage logic:
+#   - INITIAL capex uses the 2025 column (nearest costed vintage to the ~2025-2026 commissioning year; the catalogue's first costed year).
+#   - REPLACEMENT capex uses the 2035+ energy-expansion cost. The battery reaches the 0.70 SoH replacement threshold around year 11-13, i.e. ~2036-2038, where the expansion cost has flattened to 72 EUR/kWh.
+# Cost decomposition (sheet 180, 2025 column, x1000 to reach EUR/kWh):
+#   energy component        =  95 EUR/kWh
+#   other project costs     = 150 EUR/kWh   (BOP, civil, grid connection)
+#   => initial energy capex = 245 EUR/kWh
+#   power component         =  86 EUR/kW
+#   energy expansion (2035+)=  72 EUR/kWh   (reuses balance-of-plant)
+economics:
+  capex_EUR_per_kWh: 245.0    # energy component (95) + other project costs (150), 2025
+  capex_EUR_per_kW:  86.0     # power component, 2025
+
+  # REPLACEMENT / degradation-valuation energy capex.
+  # Energy-expansion cost only: replacement reuses the balance-of-plant, so "other project costs" are NOT recharged on replacement. This is the catalogue's own incremental-cost estimate.
+  repl_energy_EUR_per_kWh: 72.0   # energy storage expansion cost, 2035+ (reuses BOP); used for replacement + degradation valuation
+  repl_power_EUR_per_kW:   96.0   # power expansion cost, 2035+ (PCS-dominated, reuses BOP); used for replacement only
+
+  # O&M - NOT YET CONSUMED in the NPV (omitted by all current run scripts).
+  # Renamed to per-kW to match the catalogue's power-based denominator (Fixed O&M is quoted in kEUR/MW/yr). When wired later, the term is opex_EUR_per_kW_year * P_cap_kW * annuity_factor.
+  opex_EUR_per_kW_year: 8.352   # Fixed O&M, 2025 (kEUR/MW/yr == EUR/kW/yr), informational

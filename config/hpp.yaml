@@ -1,0 +1,11 @@
+name: Battery Degradation Study HPP v1.0
+site:
+  name: DK1_Denmark_Onshore
+  latitude: 56.22732285
+  longitude: 8.594398
+  altitude: 85.0
+  energy_resource: !include wind_resource.yaml
+wind_farm: !include wind_farm.yaml
+storage_system: !include battery.yaml
+electrical_collection_array: !include cables.yaml
+grid_connection_capacity: 325000000.0

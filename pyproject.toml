@@ -12,17 +12,19 @@ license = {text = "MIT"}
 authors = [{name = "Thodoris Tsonopoulos"}]
 
 dependencies = [
-    "numpy>=1.24",
-    "numpy-financial",
-    "pandas>=2.0",
-    "scipy",
-    "matplotlib",
-    "pyyaml",
-    "xarray",
-    "rainflow",
-    "pyomo",
-    "py_wake",
+    "numpy==2.4.1",
+    "numpy-financial==1.0.0",
+    "pandas==2.3.3",
+    "scipy==1.17.0",
+    "matplotlib==3.10.8",
+    "pyyaml==6.0.3",
+    "xarray==2025.12.0",
+    "rainflow==3.2.0",
+    "pyomo==6.10.0",
+    "py_wake==2.6.18",
 ]
+# Versions pinned to the environment that produced every result in the thesis.
+# Python 3.13.14. See README for how to reproduce.
 
 [tool.setuptools.packages.find]
 where = ["src"]

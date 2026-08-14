@@ -7,7 +7,7 @@ the directory layout is described in one file rather than in eight.
 Usage:
     from paths import CONFIG_DIR, DATA_DIR, results_dir
 
-    hpp_yaml  = CONFIG_DIR / "WP2_HPP.yaml"
+    hpp_yaml  = CONFIG_DIR / "hpp.yaml"
     price_csv = DATA_DIR / "dk1_prices_2022.csv"
     out       = results_dir("baseline")     # created if absent
 """
@@ -29,17 +29,17 @@ def _find_root(start: Path) -> Path:
 
 REPO_ROOT = _find_root(Path(__file__).resolve())
 
-CONFIG_DIR = REPO_ROOT / "config"        # WP2_*.yaml
+CONFIG_DIR = REPO_ROOT / "config"        # site, turbine, battery, cable configuration
 DATA_DIR = REPO_ROOT / "data"            # price and wind time series
 RESULTS_DIR = REPO_ROOT / "results"      # run output, not tracked by git
 FIGURES_DIR = REPO_ROOT / "figures"      # figure scripts
 
 # Configuration files, named so a typo fails at import rather than at runtime.
-HPP_YAML = CONFIG_DIR / "WP2_HPP.yaml"
-BATTERY_YAML = CONFIG_DIR / "WP2_Battery.yaml"
-WIND_FARM_YAML = CONFIG_DIR / "WP2_Wind_Farm.yaml"
-WIND_RESOURCE_YAML = CONFIG_DIR / "WP2_Wind_Resource.yaml"
-CABLES_YAML = CONFIG_DIR / "WP2_Cables.yaml"
+HPP_YAML = CONFIG_DIR / "hpp.yaml"
+BATTERY_YAML = CONFIG_DIR / "battery.yaml"
+WIND_FARM_YAML = CONFIG_DIR / "wind_farm.yaml"
+WIND_RESOURCE_YAML = CONFIG_DIR / "wind_resource.yaml"
+CABLES_YAML = CONFIG_DIR / "cables.yaml"
 
 PRICE_CSV_2019 = DATA_DIR / "dk1_prices_2019.csv"
 PRICE_CSV_2022 = DATA_DIR / "dk1_prices_2022.csv"
