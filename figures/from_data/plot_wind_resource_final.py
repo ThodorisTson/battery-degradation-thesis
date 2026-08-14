@@ -1,16 +1,19 @@
 """
 plot_wind_resource_final.py
 ---------------------------
-Final wind-resource figures for the WP2 HPP, from the site ERA5 series at 90 m.
+Wind-resource figures for the reference plant, from the site ERA5 series at 90 m.
 
-  FIG 1 (body)     : omnidirectional wind-speed histogram + omnidirectional Weibull fit
-  FIG 2 (body)     : directional wind rose, speed bins = turbine operating states
-  FIG 3 (appendix) : 12 directional Weibull curves, distinct colours (qualitative map)
+  fig:wind_weibull    omnidirectional wind-speed histogram with Weibull fit
+  fig:wind_rose       directional wind rose, speed bins = turbine operating states
+  fig:weibull_sectors 12 directional Weibull curves (appendix)
 
-Numbers (sector fits) replicate wp2_common.fit_weibull_sectors exactly so the figures match the resource the wake model consumes.
+All three come from one script because they share one fit. The caption of the omnidirectional figure states that the wake model uses the twelve-sector fit of
+the appendix figure rather than the omnidirectional one, so producing them from separate scripts would let the two disagree in print.
 
-Thesis style: vector PDF, no bbox_inches='tight', constrained_layout, no titles, TU Delft palette for the body figures, fonts >= 9 pt. Captions carry all text.
-Data = ERA5 reanalysis at the nearest grid cell (NOT mast data) -> state in caption.
+The sector fits replicate degradation.site.fit_weibull_sectors exactly, so the figures match the resource the wake model consumes.
+
+Data is ERA5 reanalysis at the nearest grid cell, not mast data. The captions say so.
+
 Deps: numpy, scipy, matplotlib, pyyaml. Reproducible in VS Code on Windows.
 """
 from pathlib import Path
@@ -19,14 +22,43 @@ import yaml
 from scipy.stats import weibull_min
 import matplotlib.pyplot as plt
 
-HERE = Path(__file__).parent if "__file__" in globals() else Path(".")
-RESOURCE_YAML = HERE / "wind_resource_2022_era5_90m.yaml"
+from degradation.paths import DATA_DIR, require
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"     # "png", "pdf" or "both"
+DPI = 300
+
+
+def save(fig, stem):
+    """Write the formats OUTPUT asks for, beside this script."""
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(HERE / f"{stem}.pdf")
+        print(f"  wrote {stem}.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(HERE / f"{stem}.png", dpi=DPI)
+        print(f"  wrote {stem}.png  ({DPI} dpi)")
+
+
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
+# Figures are written beside this script; the input comes from data/.
+HERE = Path(__file__).resolve().parent
+RESOURCE_YAML = require(DATA_DIR / "wind_resource_2022_era5_90m.yaml")
 N_SECTORS = 12
 
 # turbine operating-state breakpoints (NREL 5 MW): cut-in 3, rated ~11.4, cut-out 25
 CUT_IN, MID, RATED, CUT_OUT = 3.0, 7.0, 11.4, 25.0
 
 NAVY, CYAN, RED, ORANGE, PURPLE = "#0C2340", "#00A6D6", "#A50034", "#EC6842", "#6E2585"
+
+# NOTE. This script sets its own rcParams and its own text width rather than
+# calling degradation.style.apply_thesis_style. TW below is 5.5 in against the
+# 6.201 in that style.py measures for \textwidth, so if these figures are
+# included at \textwidth LaTeX scales them up by 1.13 and their text prints
+# about 13 percent larger than every other matplotlib figure in the thesis.
+# Left as found; see the note in the repository README before changing it,
+# because the rose legend placement is tuned to the current width.
 plt.rcParams.update({
     "font.family": "DejaVu Sans",
     "font.size": 10, "axes.labelsize": 10,
@@ -36,7 +68,8 @@ plt.rcParams.update({
 TW = 5.5  # text width [in]
 
 # ---------- load ----------
-wr = yaml.safe_load(open(RESOURCE_YAML))["wind_resource"]
+with open(RESOURCE_YAML, encoding="utf-8") as fh:
+    wr = yaml.safe_load(fh)["wind_resource"]
 ws = np.asarray(wr["wind_speed"], float)
 wd = np.asarray(wr["wind_direction"], float) % 360.0
 ok = np.isfinite(ws) & np.isfinite(wd) & (ws > 0)
@@ -70,7 +103,7 @@ ax.set_xlabel("Wind speed at 90 m hub height  [m/s]")
 ax.set_ylabel("Probability density  [-]")
 ax.set_xlim(0, np.ceil(ws.max()))
 ax.legend(frameon=False, loc="upper right")
-fig1.savefig(HERE/"wind_weibull_omni.pdf"); fig1.savefig(HERE/"wind_weibull_omni.png", dpi=150)
+save(fig1, "wind_weibull_omni")
 
 # ============ FIG 2: wind rose, turbine-state bins (BODY) ============
 speed_bins   = [0, CUT_IN, MID, RATED, CUT_OUT, np.inf]
@@ -103,11 +136,12 @@ ax2.set_xticklabels(["N","NE","E","SE","S","SW","W","NW"])
 ax2.set_yticks(np.arange(0, bottom.max()+2, 4))
 ax2.tick_params(labelsize=8)
 ax2.legend(loc="lower left", bbox_to_anchor=(-0.22, -0.16), frameon=False, fontsize=8)
-fig2.savefig(HERE/"wind_rose_turbinebins.pdf"); fig2.savefig(HERE/"wind_rose_turbinebins.png", dpi=150)
+save(fig2, "wind_rose_turbinebins")
 print(f"rose: above cut-out hours = {(ws>CUT_OUT).sum()} (bin shown only if non-empty)")
 
 # ============ FIG 3: 12 sector Weibulls, DISTINCT colours (APPENDIX) ============
-# qualitative palette: 12 visually distinct hues (tab20 evens + a couple extras)
+# Qualitative palette, deliberately not the TU Delft set: twelve sectors need
+# twelve separable hues and the brand palette does not provide that many.
 distinct = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd","#8c564b",
             "#e377c2","#7f7f7f","#bcbd22","#17becf","#393b79","#a55194"]
 ls_cycle = ["-","-","-","-","-","-","--","--","--","--","--","--"]
@@ -120,5 +154,4 @@ ax.set_xlabel("Wind speed at 90 m hub height  [m/s]")
 ax.set_ylabel("Probability density  [-]")
 ax.set_xlim(0, np.ceil(ws.max()))
 ax.legend(frameon=False, ncol=2, fontsize=8, title="sector centre (freq.)", title_fontsize=8)
-fig3.savefig(HERE/"weibull_appendix_12.pdf"); fig3.savefig(HERE/"weibull_appendix_12.png", dpi=150)
-print("saved: wind_weibull_omni, wind_rose_turbinebins, weibull_appendix_12 (pdf+png)")
+save(fig3, "weibull_appendix_12")
