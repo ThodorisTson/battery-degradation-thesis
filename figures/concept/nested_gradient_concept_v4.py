@@ -1,8 +1,9 @@
 r"""
 nested_gradient_concept_v4.py   (v4.2)
 
-Generates Figure 3.13, the conceptual gradient-based sizing method, as PNG, PDF
-and SVG.
+Generates Figure 3.13, the conceptual gradient-based sizing method.
+
+OUTPUT below selects "png", "pdf" or "both". WRITE_SVG is separate, because the SVG is a working format rather than a thesis deliverable.
 
 Content changes from v3
 -----------------------
@@ -12,24 +13,17 @@ Content changes from v3
 
 Type size
 ---------
-v3 used a 680 unit canvas with a 14 px title and 11 px body. Included at
-\textwidth on A4, roughly 454 pt, that is 0.667 pt per unit, so the title
-printed at 9.3 pt and the body at 7.3 pt. Figure text below 8 pt is hard to
-read on paper.
+v3 used a 680 unit canvas with a 14 px title and 11 px body. Included at \textwidth on A4, roughly 454 pt, that is 0.667 pt per unit, so the title
+printed at 9.3 pt and the body at 7.3 pt. Figure text below 8 pt is hard to read on paper.
 
-v4.2 raises the title to 19 and the body to 15, which print at 12.7 pt and
-10.0 pt. Two boxes had to grow to hold the larger text: "Total degradation"
-needs 141 units at 19 against the 122 v3 allowed, and the gradient description
-needs 355 units at 15 against 360. Side margins drop from 40 to 24 to pay for
-it. The redundant arrow label is removed, since the same variables are named
-inside the outer-loop box.
+v4.2 raises the title to 19 and the body to 15, which print at 12.7 pt and 10.0 pt. Two boxes had to grow to hold the larger text: "Total degradation"
+needs 141 units at 19 against the 122 v3 allowed, and the gradient description needs 355 units at 15 against 360. Side margins drop from 40 to 24 to pay for
+it. The redundant arrow label is removed, since the same variables are named inside the outer-loop box.
 
 Fonts
 -----
-The stack is Carlito, then Calibri, then DejaVu Sans. Carlito is metric
-compatible with Calibri, so the first two render identically. DejaVu Sans is
-about 25 percent wider and will overflow the boxes. The script reports which
-font was resolved and checks every string against its box, so a substitution
+The stack is Carlito, then Calibri, then DejaVu Sans. Carlito is metric compatible with Calibri, so the first two render identically. DejaVu Sans is
+about 25 percent wider and will overflow the boxes. The script reports which font was resolved and checks every string against its box, so a substitution
 is visible in the console rather than in the printed figure.
 
 Usage
@@ -45,9 +39,14 @@ import matplotlib.pyplot as plt
 from matplotlib.font_manager import FontProperties, findfont
 from matplotlib.patches import FancyBboxPatch, FancyArrowPatch
 
-SCRIPT_VERSION = "4.2"
+SCRIPT_VERSION = "4.3"
 OUT = Path(__file__).parent
 STEM = "nested_gradient_concept_v4"
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"       # "png", "pdf" or "both"
+WRITE_SVG = False     # working format, not a thesis deliverable
+DPI = 300
 
 # Colours read from nested_gradient_concept_v3.svg
 PURPLE = "#6F5B7E"
@@ -142,6 +141,9 @@ def report(fig):
 
 
 def main():
+    if OUTPUT not in ("png", "pdf", "both"):
+        raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
     print(f"nested_gradient_concept_v4.py  v{SCRIPT_VERSION}")
     print(f"output folder: {OUT}")
 
@@ -228,7 +230,14 @@ def main():
     fig.canvas.draw()
     report(fig)
 
-    for ext, kwargs in [("png", {"dpi": 300}), ("pdf", {}), ("svg", {})]:
+    formats = []
+    if OUTPUT in ("png", "both"):
+        formats.append(("png", {"dpi": DPI}))
+    if OUTPUT in ("pdf", "both"):
+        formats.append(("pdf", {}))
+    if WRITE_SVG:
+        formats.append(("svg", {}))
+    for ext, kwargs in formats:
         path = OUT / f"{STEM}.{ext}"
         fig.savefig(path, bbox_inches="tight", pad_inches=0.05,
                     facecolor="white", **kwargs)

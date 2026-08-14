@@ -7,14 +7,14 @@ This repository depends on SHIPP, a hybrid power plant sizing framework by Dr. J
 | | |
 |---|---|
 | Baseline | SHIPP v1.2.0, commit `b0b4c0b` |
-| Pinned in `requirements.txt` | `<COMMIT_SHA>` |
+| Pinned in `requirements.txt` | `jennaiori/shipp@d53a657`, branch `feature_degradation` |
 | Files differing from baseline | `src/shipp/kernel_pyomo.py` only |
 | Size of difference | 42 insertions, 5 deletions |
 
 Every other file under `src/shipp` is byte-identical to the baseline, verified with:
 
 ```bash
-git diff --shortstat b0b4c0b <PINNED_SHA> -- src/shipp
+git diff --shortstat b0b4c0b d53a657 -- src/shipp
 ```
 
 ## Why this baseline rather than the current release
@@ -74,4 +74,7 @@ Extraction is wrapped in `try`/`except`. On failure a `RuntimeWarning` is issued
 
 ## Upstream status
 
-These changes were offered to the SHIPP maintainer as a pull request against the `feature_degradation` branch: `<PR_URL>`.
+These changes were merged upstream on 14 August 2026 as pull request #6
+(https://github.com/jennaiori/shipp/pull/6), commit `d53a657` on the
+`feature_degradation` branch. The merged kernel is byte-identical to the
+version used for every result in this thesis.

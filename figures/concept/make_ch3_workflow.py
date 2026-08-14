@@ -28,17 +28,24 @@ LAYOUT
 Reproducing on Windows in VS Code:
     pip install reportlab pymupdf
     python make_ch3_workflow.py
-PyMuPDF is only needed for the PNG. Without it the script falls back to
-poppler's pdftoppm, and if that is absent it writes the SVG and PDF and skips
-the PNG with a message.
+
+OUTPUT below selects "png", "pdf" or "both". The SVG is written whenever
+WRITE_SVG is true; it is the second backend that keeps the geometry honest, not
+a thesis deliverable.
 """
-import os
 import subprocess
 import shutil
+import tempfile
 from pathlib import Path
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"                            # "png", "pdf" or "both"
+WRITE_SVG = False                          # cross-check backend, not a deliverable
+STEM = "ch3_three_approaches_workflow"     # output filename without extension
+DPI = 300
 
 # -- Palette (taken from the original figure, unchanged) --------------------
 INK        = "#0B0B0B"   # panel titles
@@ -352,32 +359,57 @@ def render_pdf(sc, path):
     c.showPage(); c.save()
 
 
-# -- PNG ---------------------------------------------------------------------
-def render_png(pdf_path, png_path, dpi=300):
+# -- Output ------------------------------------------------------------------
+def write_png(pdf_path, png_path, dpi=DPI):
+    """Rasterise a PDF to PNG. PyMuPDF first, then Poppler's pdftoppm."""
     try:
-        import fitz  # PyMuPDF
-        doc = fitz.open(str(pdf_path))
-        doc[0].get_pixmap(matrix=fitz.Matrix(dpi / 72.0, dpi / 72.0),
-                          alpha=False).save(str(png_path))
-        doc.close(); return True
+        try:
+            import pymupdf              # PyMuPDF 1.24.3 and later
+        except ImportError:
+            import fitz as pymupdf      # older releases expose it as fitz
+        doc = pymupdf.open(str(pdf_path))
+        doc.load_page(0).get_pixmap(dpi=dpi, alpha=False).save(str(png_path))
+        doc.close()
+        return True
     except ImportError:
         pass
-    if shutil.which("pdftoppm") is None:
-        print("PNG skipped: install PyMuPDF with  pip install pymupdf")
+    exe = shutil.which("pdftoppm")
+    if exe is None:
+        print("PNG not written. Install PyMuPDF with: pip install pymupdf")
         return False
-    stem = str(png_path)[:-4] if str(png_path).endswith(".png") else str(png_path)
-    subprocess.run(["pdftoppm", "-png", "-r", str(dpi), "-singlefile",
-                    str(pdf_path), stem], check=True)
+    subprocess.run([exe, "-png", "-r", str(dpi), "-singlefile",
+                    str(pdf_path), str(png_path.with_suffix(""))], check=True)
     return True
 
 
+def emit(build_fn, out_dir, stem):
+    """Build once, then write the formats OUTPUT asks for.
+
+    The PDF is always built, because the PNG is rasterised from it. When only a
+    PNG is wanted the PDF goes to a temporary directory and is discarded, so the
+    two formats can never be built from different code paths.
+    """
+    keep_pdf = OUTPUT in ("pdf", "both")
+    with tempfile.TemporaryDirectory() as tmp:
+        pdf_path = (out_dir if keep_pdf else Path(tmp)) / f"{stem}.pdf"
+        build_fn(pdf_path)
+        if keep_pdf:
+            print(f"  wrote {pdf_path.name}")
+        if OUTPUT in ("png", "both"):
+            png_path = out_dir / f"{stem}.png"
+            if write_png(pdf_path, png_path):
+                print(f"  wrote {png_path.name}  ({DPI} dpi)")
+
+
 if __name__ == "__main__":
+    if OUTPUT not in ("png", "pdf", "both"):
+        raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
     out = Path(__file__).parent
     sc = build_scene()
-    render_svg(sc, out / "ch3_three_approaches_workflow.svg")
-    render_pdf(sc, out / "ch3_three_approaches_workflow.pdf")
-    render_png(out / "ch3_three_approaches_workflow.pdf",
-               out / "ch3_three_approaches_workflow.png")
-    print(f"figure size {sc.width} x {sc.height:.0f} pt "
-          f"(was 680 x 620), {len(sc.ops)} drawing operations")
-    print("Wrote ch3_three_approaches_workflow.{svg,pdf,png} in", out)
+    if WRITE_SVG:
+        render_svg(sc, out / f"{STEM}.svg")
+        print(f"  wrote {STEM}.svg")
+    emit(lambda path: render_pdf(sc, path), out, STEM)
+    print(f"figure size {sc.width} x {sc.height:.0f} pt, "
+          f"{len(sc.ops)} drawing operations")

@@ -21,7 +21,7 @@ everywhere except where it appears in archived comments.
 | Name | `battery-degradation-thesis` |
 | Package (import name) | `degradation` |
 | Layout | `src/` with `pyproject.toml`, installed editable |
-| SHIPP | dependency pinned at `ThodorisTson/shipp@16fd925`, not vendored |
+| SHIPP | dependency pinned at `jennaiori/shipp@d53a657`, not vendored |
 
 Dependency versions are pinned to the environment that produced every result in
 the thesis: Python 3.13.14, numpy 2.4.1, pandas 2.3.3, scipy 1.17.0,
@@ -262,6 +262,10 @@ Left in the fork at `4f090b1`, which remains available:
   report output. Test output was removed afterwards.
 - `solve_lp_pyomo` exposes `soc_max1`, `soc_max2`, `e_start1` and
   `return_duals`, confirming the pinned SHIPP commit carries the kernel changes.
+- The four kernel changes were merged upstream on 14 August 2026 (pull request
+  #6). The merged commit `d53a657` was diffed against the pull request head
+  `16fd925` and found byte-identical, so the pin was repointed from the fork to
+  Jenna's repository.
 
 Not yet done: a full-year run reproducing the committed results number for
 number.

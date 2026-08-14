@@ -1,25 +1,36 @@
 """
 fig_simulation_loop.py
 ----------------------
-Figure 3.9: Multi-year simulation loop structure.
+Multi-year simulation loop structure (thesis label fig:simulation_loop).
 
-Uses ReportLab only — no matplotlib. Clean vector PDF + 300 dpi PNG.
+ReportLab only, no matplotlib.
 
 Coordinate system: ReportLab y=0 is BOTTOM-LEFT.
-All design coordinates below are in mm, converted with the `mm` unit.
+Design coordinates below are in SVG px, converted with s() and sy().
 
 Run: python fig_simulation_loop.py
-Output: fig_simulation_loop.pdf  +  fig_simulation_loop.png
+Output: set OUTPUT below to "png", "pdf" or "both". Files are written next to
+        this script. The PNG is rasterised from the same PDF the vector output
+        uses, so the two cannot differ.
+
+PNG export needs PyMuPDF (pip install pymupdf) or Poppler's pdftoppm on PATH.
 """
 
 from __future__ import annotations
 from pathlib import Path
 import io
+import shutil
+import subprocess
+import tempfile
 
 from reportlab.pdfgen import canvas as rl_canvas
 from reportlab.lib.colors import HexColor, white
 from reportlab.lib.units import mm
 from reportlab.pdfbase.pdfmetrics import stringWidth
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"                  # "png", "pdf" or "both"
+STEM = "fig_simulation_loop"     # output filename without extension
 
 # ── Palette ───────────────────────────────────────────────────────────────────
 BLUE    = HexColor("#0076C2")   # LP dispatch (TU Delft blue)
@@ -193,6 +204,18 @@ def rich_left(c, x_svg, y_svg, segs):
     return x
 
 
+def rich_width(segs):
+    """Width in points of a rich_left segment list."""
+    return sum(stringWidth(text, font, size * 0.72 if style == "sub" else size)
+               for text, font, size, _col, style in segs)
+
+
+def rich_centre(c, cx_svg, y_svg, segs):
+    """Centred version of rich_left. cx_svg is an SVG x coordinate."""
+    x_svg = cx_svg - rich_width(segs) / (SCALE * mm) / 2
+    return rich_left(c, x_svg, y_svg, segs)
+
+
 # ── Build PDF ─────────────────────────────────────────────────────────────────
 def build(buf):
     c = rl_canvas.Canvas(buf, pagesize=(FIG_W, FIG_H))
@@ -243,10 +266,15 @@ def build(buf):
 
     arrow_v(c, 552, 222, 298, TEAL_S, LW)
 
-    # SoH update (x=454, y=298, w=196, h=52)
-    box(c, 454, 298, 196, 52, 7, GRAY_F, GRAY_S, 0.5,
-        "SoH update", GRAY_T, "Helvetica-Bold", 9,
-        "accumulate fd \u2192 SoH", GRAY_ST, 7.5)
+    # SoH update (x=454, y=298, w=196, h=52). Drawn as box plus rich subtitle so
+    # that f_d carries its subscript, as in Chapters 2 and 3.
+    rr(c, 454, 298, 196, 52, 7, GRAY_F, GRAY_S, 0.5)
+    txt(c, 552, 318, "SoH update", "Helvetica-Bold", 9, GRAY_T)
+    rich_centre(c, 552, 337, [
+        ("accumulate f", "Helvetica", 7.5, GRAY_ST, ""),
+        ("d",            "Helvetica", 7.5, GRAY_ST, "sub"),
+        (" \u2192 SoH",  "Helvetica", 7.5, GRAY_ST, ""),
+    ])
 
     # SoH update left edge (454,324) → horizontal to diamond right tip (390,324)
     arrow_h(c, 454, 390, 324, GRAY_S, LW)
@@ -314,19 +342,47 @@ def build(buf):
     c.save()
 
 
-# ── Save ──────────────────────────────────────────────────────────────────────
+# -- Output ------------------------------------------------------------------ #
+def write_png(pdf_bytes: bytes, png_path: Path, dpi: int = DPI) -> bool:
+    """Rasterise an in-memory PDF to PNG. PyMuPDF first, then Poppler's pdftoppm."""
+    try:
+        try:
+            import pymupdf              # PyMuPDF 1.24.3 and later
+        except ImportError:
+            import fitz as pymupdf      # older releases expose it as fitz
+        doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+        doc.load_page(0).get_pixmap(dpi=dpi, alpha=False).save(str(png_path))
+        doc.close()
+        return True
+    except ImportError:
+        pass
+    exe = shutil.which("pdftoppm")
+    if exe is None:
+        print("PNG not written. Install PyMuPDF with: pip install pymupdf")
+        return False
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_pdf = Path(tmp) / "page.pdf"
+        tmp_pdf.write_bytes(pdf_bytes)
+        subprocess.run([exe, "-png", "-r", str(dpi), "-singlefile",
+                        str(tmp_pdf), str(png_path.with_suffix(""))], check=True)
+    return True
+
+
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
 OUT = Path(__file__).parent
 
 pdf_buf = io.BytesIO()
 build(pdf_buf)
 pdf_bytes = pdf_buf.getvalue()
-(OUT / "fig_simulation_loop.pdf").write_bytes(pdf_bytes)
-print(f"Saved fig_simulation_loop.pdf  ({len(pdf_bytes)//1024} KB)")
 
-try:
-    from pdf2image import convert_from_bytes
-    pages = convert_from_bytes(pdf_bytes, dpi=DPI)
-    pages[0].save(str(OUT / "fig_simulation_loop.png"), "PNG")
-    print(f"Saved fig_simulation_loop.png  ({DPI} dpi)")
-except Exception as e:
-    print(f"PNG skipped ({e}). PDF is ready for LaTeX.")
+if OUTPUT in ("pdf", "both"):
+    pdf_path = OUT / f"{STEM}.pdf"
+    pdf_path.write_bytes(pdf_bytes)
+    print(f"Saved {pdf_path.name}  ({len(pdf_bytes) // 1024} KB)")
+
+if OUTPUT in ("png", "both"):
+    png_path = OUT / f"{STEM}.png"
+    if write_png(pdf_bytes, png_path):
+        print(f"Saved {png_path.name}  ({DPI} dpi)")

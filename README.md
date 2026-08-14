@@ -1,103 +1,219 @@
 # Modeling of Battery Degradation for Integrated Design of Storage Systems
 
-Code accompanying the MSc thesis of the same title (Sustainable Energy Technology, Wind Energy Section, Delft University of Technology, 2026).
+Code accompanying the MSc thesis of the same title (Sustainable Energy
+Technology, Wind Energy Section, Delft University of Technology, 2026).
 
-The thesis investigates how explicitly accounting for battery degradation changes the optimal operating strategy and the optimal battery size for a hybrid wind and battery power plant. The test case is the IEA Wind Task 50 onshore reference site in western Denmark, dispatched against DK1 day-ahead prices.
+The thesis investigates how explicitly accounting for battery degradation
+changes the optimal operating strategy and the optimal battery size for a hybrid
+wind and battery power plant. The test case is the IEA Wind Task 50 onshore
+reference site in western Denmark, dispatched against DK1 day-ahead prices.
 
-This repository contains only the code written for the thesis. The underlying sizing and dispatch framework, SHIPP, is a separate package by Dr. Jenna Iori and is installed as a dependency. The changes required to SHIPP itself are listed in [`SHIPP_MODIFICATIONS.md`](SHIPP_MODIFICATIONS.md).
+This repository contains only the code written for the thesis. The underlying
+sizing and dispatch framework, SHIPP, is a separate package by Dr. Jenna Iori
+and is installed as a dependency rather than copied in.
 
 ## Contents
 
 | Path | Description |
-|------|-------------|
-| `src/degradation/` | Degradation models and the sub-gradient implementation |
+|---|---|
+| `src/degradation/` | Degradation models, sub-gradient, site setup, economics, shared paths |
 | `scripts/` | Entry points for the three investigations |
-| `verification/` | Scripts reproducing the verification appendix |
-| `figures/` | One script per thesis figure |
-| `config/` | Site, turbine, and battery configuration files |
+| `figures/` | Figure scripts, grouped by what they read |
+| `verification/` | Checks reported in the appendices |
+| `config/` | Site, turbine, battery, and cable configuration |
+| `data/` | Price and wind time series |
+| `results/` | Frozen simulation output, tracked in version control |
+| `docs/` | Known issues |
+| `tools/` | Migration helpers |
+
+## SHIPP dependency
+
+| | |
+|---|---|
+| Repository | https://github.com/jennaiori/shipp |
+| Branch | `feature_degradation` |
+| Commit | `d53a657` |
+
+The pin is in `requirements.txt`. Every result in this thesis was produced
+against this commit: SHIPP v1.2.0 plus four optional arguments to
+`solve_lp_pyomo` (`soc_max1`, `soc_max2`, `e_start1`, `return_duals`) added for
+this work and merged upstream as pull request #6 on 14 August 2026. The merged
+kernel is byte-identical to the version used for the results.
+
+SHIPP `main` has since moved to v1.2.1, which changes the `n_year` convention in
+`components.py` and relaxes the initial state-of-charge constraint to an
+inequality. The pin is deliberate. See
+[`SHIPP_MODIFICATIONS.md`](SHIPP_MODIFICATIONS.md) for the full list of changes
+and the reasoning.
 
 ## Installation
 
-Requires Python 3.10 or later and a Gurobi installation with a valid licence. An academic licence is available free of charge from Gurobi.
-
 ```bash
-git clone https://github.com/ThodorisTson/<REPO_NAME>.git
-cd <REPO_NAME>
+git clone https://github.com/ThodorisTson/battery-degradation-thesis.git
+cd battery-degradation-thesis
 python -m venv .venv
 .venv\Scripts\activate          # Windows
 pip install -r requirements.txt
 ```
 
-`requirements.txt` pins SHIPP to a specific commit. See [`SHIPP_MODIFICATIONS.md`](SHIPP_MODIFICATIONS.md) for why that commit rather than the current release.
+Dependency versions are pinned to the environment that produced every result:
+Python 3.13, numpy 2.4.1, pandas 2.3.3, scipy 1.17.0, matplotlib 3.10.8,
+xarray 2025.12.0, pyomo 6.10.0, py_wake 2.6.18, rainflow 3.2.0, PyYAML 6.0.3,
+gurobipy 13.0.1.
 
-### Credentials
+Verify the installation:
 
-Two scripts retrieve data from external services and read their credentials from environment variables. Set them before running:
-
-```powershell
-[Environment]::SetEnvironmentVariable("ENTSOE_TOKEN", "<your-token>", "User")
+```bash
+python -c "from degradation import paths; print(paths.REPO_ROOT)"
+python -m degradation.economics
 ```
 
-`.env.example` lists every variable the code expects. No credential is stored in this repository.
+The second command runs a self-test of the discounting, efficiency, and revenue
+conventions and prints ALL CHECKS PASSED.
+
+To change the SHIPP pin, edit `requirements.txt` and reinstall with
+      `pip install --force-reinstall --no-deps "shipp @ git+..."`. Omitting
+      `--no-deps` upgrades numpy, pandas, scipy and matplotlib past their pins.
+
+### Solver
+
+The dispatch LP is solved with Gurobi through Pyomo. A licence is required; a
+free academic licence is available at https://www.gurobi.com/academia/. Place
+`gurobi.lic` in your home directory. `gurobipy` ships a size-limited licence
+sufficient only for small models, and a full year of hourly dispatch is about
+44,000 variables.
+
+Without a licence, set `pyo_solver = "none"` at the top of any run script to
+fall back to the SciPy sparse solver. That path does not support the
+depth-of-discharge constraint and is limited to roughly six months of
+simulation, so it reproduces the structure of the results but not their values.
 
 ## The three investigations
 
-The thesis pursues three approaches to the same question. Each has a separate entry point.
+### 1. Parameter sweep, in two stages
 
-### 1. Parameter sweep (main sizing result)
-
-```bash
-python scripts/run_sweep_2d.py
-```
-
-Evaluates net present value over a grid of battery energy and power capacities, once with degradation priced in and once without. Produces the headline result that the optimal battery size falls by approximately 30% when degradation is included. Runtime is several hours on a laptop.
-
-### 2. Monolithic non-linear program (documented negative result)
+Stage 1 sweeps energy and power capacity to find the optimal size:
 
 ```bash
-python scripts/run_nlp_monolithic.py
+python scripts/run_sizing_sweep.py
 ```
 
-Solves dispatch and degradation as a single non-linear program. The formulation does not converge reliably, because the rainflow-based degradation cost has a discontinuous gradient. This is reported as a negative result rather than a limitation.
+Stage 2 fixes that size and sweeps the state-of-charge operating window:
 
-### 3. Nested architecture (inner loop only)
+```bash
+python scripts/run_window_sweep.py
+```
+
+Both evaluate net present value with degradation priced in and without.
+Together they produce the headline result: accounting for degradation reduces
+the optimal battery size by roughly 30%. Runtime is several hours each.
+
+### 2. Monolithic non-linear program
+
+```bash
+python scripts/run_nlp_monolithic.py --year 2022 --slot D43
+```
+
+Solves dispatch and degradation as a single non-linear program. This is
+reported as a negative result: the rainflow degradation cost has a
+discontinuous gradient at cycle-topology boundaries, so the solver converges on
+only a minority of days, and apparent gains on the remainder are artefacts of
+premature termination. `--all-days` runs the full year.
+
+### 3. Nested architecture, inner loop
 
 ```bash
 python scripts/run_baseline.py
 ```
 
-Runs the inner dispatch loop with degradation accounting over the project lifetime, and computes the outer-loop gradient inputs. The outer loop itself is not closed and is identified as future work.
+Runs the inner dispatch loop with degradation accounting over the 20-year
+project, re-solving each year at the degraded capacity, and computes the
+outer-loop gradient inputs. The outer loop itself is not closed and is
+identified as future work.
 
-## Reproducing the figures
+## Results
 
-Every figure in the thesis is generated by a script in `figures/`. Each script writes both PDF and PNG at 300 dpi and reads from `results/`.
+`results/` is tracked in version control rather than ignored. The simulation
+runs are frozen and a full sweep takes hours, so the outputs the figures read
+from are committed, and every figure can be regenerated from a clean clone
+without re-running anything.
+
+| Folder | Produced by |
+|---|---|
+| `results/baseline/xu/` | `run_baseline.py` |
+| `results/sizing_sweep/` | `run_sizing_sweep.py` |
+| `results/window_sweep/` | `run_window_sweep.py` |
+| `results/nlp_monolithic_all_days/` | `run_nlp_monolithic.py --all-days` |
+| `results/week_snapshot/` | `verification/verify_week_snapshot.py` |
+| `results/verification/` | `verification/` scripts |
+
+Re-running a script overwrites the committed output. Check `git status` before
+committing after a run.
+
+## Figures
+
+Figure scripts are grouped by what they read, since that determines whether they
+run from a clean clone. Each writes its output beside itself.
+
+| Folder | Reads |
+|---|---|
+| `figures/concept/` | nothing: equations, synthetic traces, diagrams |
+| `figures/from_data/` | `config/` or `data/` |
+| `figures/from_results/` | `results/` |
+| `figures/external/` | no script; diagram sources only |
+
+Filenames do not encode figure numbers, since numbers move when chapters are
+edited. The mapping is below.
 
 | Figure | Script |
-|--------|--------|
-| _TODO: complete this table_ | |
-
-Run the corresponding investigation first, since the figure scripts read its output.
+|---|---|
+| _to be completed_ | |
 
 ## Verification
 
-`verification/` reproduces the checks reported in the appendices: sub-gradient exactness against finite differences, per-timestep attribution, energy conservation over a representative week, and the rainflow readback check.
+`verification/` reproduces the checks reported in the appendices: sub-gradient
+exactness against finite differences, per-timestep attribution, energy
+conservation over a representative week, and the rainflow read-back on
+synthetic traces.
 
 ```bash
 python verification/verify_week_snapshot.py
+python verification/verify_tier1_degradation.py
+python verification/verify_tier2_dispatch.py
 ```
 
 ## Data
 
-_TODO: state where the wind and price data come from, and whether they are included here or must be downloaded._
+All input data is included; nothing needs downloading.
+
+| File | Source |
+|---|---|
+| `data/dk1_prices_2019.csv`, `data/dk1_prices_2022.csv` | ENTSO-E Transparency Platform, DK1 day-ahead prices |
+| `data/wind_resource_2022_era5_90m.yaml` | ERA5 reanalysis via the Open-Meteo archive endpoint, grid cell 56.25 N 8.50 E, 100 m series scaled to 90 m hub height with a power-law exponent of 0.17 |
+| `config/wind_farm.yaml` | IEA Wind Task 50 reference layout, 65 NREL 5 MW turbines |
+| `config/battery.yaml` | Danish Energy Agency Technology Data for Energy Storage, sheet 180 |
+
+Provenance for the wind series is documented in the header of
+`config/wind_resource.yaml`.
+
+## Known issues
+
+`docs/KNOWN_ISSUE_failed_error_check_solve_lp_pyomo.md` explains the
+"Failed error check in solve_lp_pyomo" warning that appears on every solve. It
+is a residual-check artefact of SHIPP's relaxed LP storage formulation.
+Revenue, NPV, and degradation are unaffected; raw cycle counts are inflated and
+should be treated as an upper bound.
 
 ## Citation
 
-_TODO: add thesis citation once the TU Delft repository record exists._
+_To be completed once the TU Delft repository record exists._
 
 ## Licence
 
-_TODO: choose a licence. MIT is a reasonable default and is compatible with SHIPP._
+Apache 2.0, matching SHIPP, on which this work depends. SHIPP is installed as a
+dependency and is not redistributed here.
 
 ## Acknowledgements
 
-Supervised by Dr. Jenna Iori, whose SHIPP framework provides the sizing and dispatch optimization used throughout.
+Supervised by Dr. Jenna Iori, whose SHIPP framework provides the sizing and
+dispatch optimization used throughout.

@@ -9,19 +9,27 @@ Fonts: Helvetica (built-in, visually equivalent to DejaVu Sans for diagrams).
 Colors: TU Delft thesis palette.
 
 Run: python fig_coupling_tension.py
-Output: fig_coupling_tension.pdf  +  fig_coupling_tension.png  (300 dpi)
-        saved next to this script.
+Output: set OUTPUT below to "png", "pdf" or "both". Files are written next to
+        this script. The PNG is rasterised from the same PDF the vector output
+        uses, so the two cannot differ.
+
+PNG export needs PyMuPDF (pip install pymupdf) or Poppler's pdftoppm on PATH.
 """
 
 from __future__ import annotations
 from pathlib import Path
 import io
+import shutil
+import subprocess
+import tempfile
 
 from reportlab.pdfgen import canvas
-from reportlab.lib.colors import HexColor, white, black
-from reportlab.lib.units import mm, inch
-from reportlab.lib import colors
-from PIL import Image as PILImage
+from reportlab.lib.colors import HexColor, white
+from reportlab.lib.units import mm
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"                   # "png", "pdf" or "both"
+STEM = "fig_coupling_tension"     # output filename without extension
 
 # ── Palette (TU Delft) ────────────────────────────────────────────────────────
 NAVY    = HexColor("#0C2340")
@@ -101,6 +109,19 @@ def draw_dashed_line(c: canvas.Canvas, x1, y1, x2, y2,
     c.setDash()   # reset
 
 
+def draw_dashed_path(c: canvas.Canvas, pts, dash=(3*mm, 2*mm), lw=0.8):
+    """Dashed polyline. One path, so the dash pattern runs on across corners."""
+    c.setStrokeColor(NEUTRAL)
+    c.setLineWidth(lw)
+    c.setDash(*dash)
+    p = c.beginPath()
+    p.moveTo(*pts[0])
+    for pt in pts[1:]:
+        p.lineTo(*pt)
+    c.drawPath(p, stroke=1, fill=0)
+    c.setDash()
+
+
 def draw_solid_line(c: canvas.Canvas, x1, y1, x2, y2, lw=1.0):
     c.setStrokeColor(NEUTRAL)
     c.setLineWidth(lw)
@@ -147,15 +168,14 @@ def build(buf):
     right_x   = BOX_X[2] + BOX_W - 3 * mm
     box_bot   = BOX_Y
 
-    # Right drop
-    draw_dashed_line(c, right_x, box_bot, right_x, fb_y)
-    # Bottom run (leave gap for label in centre)
-    label_w = 32 * mm
-    mid     = FIG_W / 2
-    draw_dashed_line(c, right_x, fb_y, mid + label_w / 2, fb_y)
-    draw_dashed_line(c, mid - label_w / 2, fb_y, left_x, fb_y)
-    # Left rise (stop short for arrowhead)
-    draw_dashed_line(c, left_x, fb_y, left_x, box_bot + ARROW_HEAD)
+    # One continuous dashed path, so the dash pattern does not restart at each
+    # corner and leave a gap where the arrowhead meets the line. The label box
+    # below is painted over the centre of the bottom run.
+    mid = FIG_W / 2
+    draw_dashed_path(c, [(right_x, box_bot),
+                         (right_x, fb_y),
+                         (left_x,  fb_y),
+                         (left_x,  box_bot - ARROW_HEAD)])
     arrowhead(c, left_x, box_bot, direction="up")
 
     # Feedback label
@@ -175,39 +195,47 @@ def build(buf):
     c.save()
 
 
-# ── Output ────────────────────────────────────────────────────────────────────
+# -- Output ------------------------------------------------------------------ #
+def write_png(pdf_bytes: bytes, png_path: Path, dpi: int = DPI) -> bool:
+    """Rasterise an in-memory PDF to PNG. PyMuPDF first, then Poppler's pdftoppm."""
+    try:
+        try:
+            import pymupdf              # PyMuPDF 1.24.3 and later
+        except ImportError:
+            import fitz as pymupdf      # older releases expose it as fitz
+        doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+        doc.load_page(0).get_pixmap(dpi=dpi, alpha=False).save(str(png_path))
+        doc.close()
+        return True
+    except ImportError:
+        pass
+    exe = shutil.which("pdftoppm")
+    if exe is None:
+        print("PNG not written. Install PyMuPDF with: pip install pymupdf")
+        return False
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp_pdf = Path(tmp) / "page.pdf"
+        tmp_pdf.write_bytes(pdf_bytes)
+        subprocess.run([exe, "-png", "-r", str(dpi), "-singlefile",
+                        str(tmp_pdf), str(png_path.with_suffix(""))], check=True)
+    return True
+
+
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
 OUT = Path(__file__).parent
 
-# PDF
 pdf_buf = io.BytesIO()
 build(pdf_buf)
 pdf_bytes = pdf_buf.getvalue()
-(OUT / "fig_coupling_tension.pdf").write_bytes(pdf_bytes)
-print(f"Saved fig_coupling_tension.pdf  ({len(pdf_bytes)//1024} KB)")
 
-# PNG via Pillow + pdf2image (poppler) if available, else via reportlab rasterise
-try:
-    from pdf2image import convert_from_bytes
-    pages = convert_from_bytes(pdf_bytes, dpi=DPI)
-    pages[0].save(str(OUT / "fig_coupling_tension.png"), "PNG")
-    print(f"Saved fig_coupling_tension.png  (pdf2image, {DPI} dpi)")
-except Exception:
-    # Fallback: render to PNG directly with reportlab's renderPM
-    try:
-        from reportlab.graphics import renderPM
-        from reportlab.graphics.shapes import Drawing
-        # Re-render as PNG using ImageMagick via subprocess if available
-        import subprocess, shutil
-        if shutil.which("gs"):   # Ghostscript
-            subprocess.run(
-                ["gs", "-dNOPAUSE", "-dBATCH", "-sDEVICE=pngalpha",
-                 f"-r{DPI}", f"-sOutputFile={OUT}/fig_coupling_tension.png",
-                 str(OUT / "fig_coupling_tension.pdf")],
-                check=True, capture_output=True
-            )
-            print(f"Saved fig_coupling_tension.png  (ghostscript, {DPI} dpi)")
-        else:
-            print("PNG skipped — install pdf2image+poppler or ghostscript for PNG export.")
-            print("PDF is ready and can be included directly in LaTeX.")
-    except Exception as e:
-        print(f"PNG skipped ({e}). PDF is ready.")
+if OUTPUT in ("pdf", "both"):
+    pdf_path = OUT / f"{STEM}.pdf"
+    pdf_path.write_bytes(pdf_bytes)
+    print(f"Saved {pdf_path.name}  ({len(pdf_bytes) // 1024} KB)")
+
+if OUTPUT in ("png", "both"):
+    png_path = OUT / f"{STEM}.png"
+    if write_png(pdf_bytes, png_path):
+        print(f"Saved {png_path.name}  ({DPI} dpi)")

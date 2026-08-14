@@ -1,24 +1,32 @@
 """
-Generate the post-processing and iterative-sequential integration diagrams
-as vector PDFs, using XDSM-style notation (not formal XDSMs).
+Generate the post-processing and iterative-sequential integration diagrams as vector PDFs, using XDSM-style notation (not formal XDSMs).
 
 Shapes:
   rounded rectangle -> optimization block
   rectangle         -> analysis / simulation block
   parallelogram     -> data (inputs and outputs)
 
-The two diagrams share identical block positions so the only visible
-difference is the presence of a feedback loop in the iterative case.
+The two diagrams share identical block positions so the only visible difference is the presence of a feedback loop in the iterative case.
 
-Requirements: reportlab  (pip install reportlab)
+Requirements: reportlab, and pymupdf for the PNG  (pip install reportlab pymupdf) 
 Runs standalone; outputs are written next to this script.
+
+NOTE ON SCOPE. None of the three diagrams below maps to a numbered figure in the thesis. Panels (a) and (b) of Figure 1.1 are drawn by degradation_coupling_taxonomy.py 
+and Figure 3.13 by nested_gradient_concept_v4.py. This script is kept as a working alternative rendering, not as a build step for the document.
 """
 
 import math
+import shutil
+import subprocess
+import tempfile
 from pathlib import Path
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.colors import HexColor, white
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"     # "png", "pdf" or "both"
+DPI = 300
 
 # ----------------------------------------------------------------------
 # Palette (matches the thesis_style.py TU Delft palette by hex value)
@@ -211,7 +219,7 @@ def build_iterative(path):
 
 
 # ----------------------------------------------------------------------
-# Diagram 3: nested degradation-aware optimizer (based on thesis Fig. 3.10)
+# Diagram 3: nested degradation-aware optimizer (thesis Figure 3.13)
 #   Outer loop sets energy capacity -> inner loop solves dispatch, builds
 #   SoC trajectory, counts rainflow cycles, accumulates degradation, and
 #   returns the gradient dNPV/dE, which updates the capacity. Repeats.
@@ -270,12 +278,53 @@ def build_nested(path):
 
 
 # ----------------------------------------------------------------------
+def write_png(pdf_path, png_path, dpi=DPI):
+    """Rasterise a PDF to PNG. PyMuPDF first, then Poppler's pdftoppm."""
+    try:
+        try:
+            import pymupdf              # PyMuPDF 1.24.3 and later
+        except ImportError:
+            import fitz as pymupdf      # older releases expose it as fitz
+        doc = pymupdf.open(str(pdf_path))
+        doc.load_page(0).get_pixmap(dpi=dpi, alpha=False).save(str(png_path))
+        doc.close()
+        return True
+    except ImportError:
+        pass
+    exe = shutil.which("pdftoppm")
+    if exe is None:
+        print("PNG not written. Install PyMuPDF with: pip install pymupdf")
+        return False
+    subprocess.run([exe, "-png", "-r", str(dpi), "-singlefile",
+                    str(pdf_path), str(png_path.with_suffix(""))], check=True)
+    return True
+
+
+def emit(build_fn, out_dir, stem):
+    """Build once, then write the formats OUTPUT asks for.
+
+    The PDF is always built, because the PNG is rasterised from it. When only a
+    PNG is wanted the PDF goes to a temporary directory and is discarded, so the
+    two formats can never be built from different code paths.
+    """
+    keep_pdf = OUTPUT in ("pdf", "both")
+    with tempfile.TemporaryDirectory() as tmp:
+        pdf_path = (out_dir if keep_pdf else Path(tmp)) / f"{stem}.pdf"
+        build_fn(pdf_path)
+        if keep_pdf:
+            print(f"  wrote {pdf_path.name}")
+        if OUTPUT in ("png", "both"):
+            png_path = out_dir / f"{stem}.png"
+            if write_png(pdf_path, png_path):
+                print(f"  wrote {png_path.name}  ({DPI} dpi)")
+
+
 if __name__ == "__main__":
+    if OUTPUT not in ("png", "pdf", "both"):
+        raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
     out = Path(__file__).parent
-    build_post_process(out / "post_process_xdsm.pdf")
-    build_iterative(out / "iterative_xdsm.pdf")
-    build_nested(out / "nested_xdsm.pdf")
-    print("Wrote:")
-    print("  ", out / "post_process_xdsm.pdf")
-    print("  ", out / "iterative_xdsm.pdf")
-    print("  ", out / "nested_xdsm.pdf")
+    for builder, stem in [(build_post_process, "post_process_xdsm"),
+                          (build_iterative,    "iterative_xdsm"),
+                          (build_nested,       "nested_xdsm")]:
+        emit(builder, out, stem)

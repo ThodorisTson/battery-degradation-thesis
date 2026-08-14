@@ -1,34 +1,26 @@
 """
 fig_ch1_coupling_taxonomy.py
 ============================
-Figure 1.1 - Three ways of coupling a rainflow degradation model to a dispatch
-optimization: (a) post-processing, (b) iterative-sequential, (c) embedded.
+Figure 1.1 - Three ways of coupling a rainflow degradation model to a dispatch optimization: (a) post-processing, (b) iterative-sequential, (c) embedded.
 
-This script is a direct port of the reference SVG
-`ch1_degradation_coupling_taxonomy_three_panels.svg`. Every coordinate, size
-and color below is taken from that file, so the drawing is reproducible from
-source instead of from a hand-edited diagram.
+This script is a direct port of the reference SVG "ch1_degradation_coupling_taxonomy_three_panels.svg". Every coordinate, size and color below is taken from that file, 
+so the drawing is reproducible from source instead of from a hand-edited diagram.
 
 Coordinate system
 -----------------
-All geometry is written in the SVG frame: origin top-left, y increases
-downward, one unit = one PostScript point. The canvas is 680 x 440 units, so
-the output PDF is 680 x 440 pt (9.44 x 6.11 in). The helper `Y()` flips y for
-ReportLab, whose origin is bottom-left.
+All geometry is written in the SVG frame: origin top-left, y increases downward, one unit = one PostScript point. The canvas is 680 x 440 units, so
+the output PDF is 680 x 440 pt (9.44 x 6.11 in). The helper "Y()" flips y for ReportLab, whose origin is bottom-left.
 
-Because the figure is included with `width=\\textwidth`, LaTeX scales it down
-by roughly 0.63 on a 430 pt text block. On-page text sizes are therefore about
-8.8 pt for node titles and 7.6 pt for subtitles. If that is too small, raise
-FONT_SCALE (text only) or lower CANVAS_SCALE (geometry and text together).
+Because the figure is included with "width=\\textwidth", LaTeX scales it down by roughly 0.63 on a 430 pt text block. On-page text sizes are therefore about
+8.8 pt for node titles and 7.6 pt for subtitles. If that is too small, raise FONT_SCALE (text only) or lower CANVAS_SCALE (geometry and text together).
 
 Outputs
 -------
-  fig_ch1_coupling_taxonomy.pdf   vector, for \\includegraphics
-  fig_ch1_coupling_taxonomy.png   300 DPI raster, for slides (optional)
+Set OUTPUT below to "png", "pdf" or "both". Files are written next to this script under the name in STEM. The PNG is rasterised from the same PDF the
+vector output uses, so the two cannot differ.
 
-The PNG step needs either PyMuPDF (`pip install pymupdf`) or Poppler's
-`pdftoppm` on PATH. If neither is present the script writes the PDF, prints a
-notice and exits normally.
+The PNG step needs either PyMuPDF ("pip install pymupdf") or Poppler's "pdftoppm" on PATH. If neither is present the script prints a notice and exits
+normally.
 
 Run from VS Code on Windows; paths are anchored with Path(__file__).parent.
 """
@@ -38,10 +30,10 @@ from __future__ import annotations
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 from reportlab.lib.colors import Color, HexColor
-from reportlab.lib.utils import ImageReader  # noqa: F401  (kept for parity with other figure scripts)
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen import canvas as rl_canvas
@@ -53,6 +45,7 @@ STEM = "fig_ch1_coupling_taxonomy"
 # 1. Knobs
 # ----------------------------------------------------------------------------
 
+OUTPUT = "png"      # "png", "pdf" or "both"
 CANVAS_SCALE = 1.0   # scales geometry and text together; 1.0 = same size as the SVG
 FONT_SCALE = 1.0     # scales text only, on top of CANVAS_SCALE
 PNG_DPI = 300
@@ -413,10 +406,13 @@ def build_pdf(path: Path, font_reg: str, font_bold: str) -> None:
 def export_png(pdf_path: Path, png_path: Path, dpi: int = PNG_DPI) -> bool:
     """PDF to PNG via PyMuPDF, then Poppler. Returns True on success."""
     try:
-        import fitz  # PyMuPDF
+        try:
+            import pymupdf              # PyMuPDF 1.24.3 and later
+        except ImportError:
+            import fitz as pymupdf      # older releases expose it as fitz
 
-        doc = fitz.open(str(pdf_path))
-        doc.load_page(0).get_pixmap(dpi=dpi).save(str(png_path))
+        doc = pymupdf.open(str(pdf_path))
+        doc.load_page(0).get_pixmap(dpi=dpi, alpha=False).save(str(png_path))
         doc.close()
         return True
     except ImportError:
@@ -428,22 +424,30 @@ def export_png(pdf_path: Path, png_path: Path, dpi: int = PNG_DPI) -> bool:
                         str(pdf_path), str(png_path.with_suffix(""))], check=True)
         return True
 
-    print("PNG skipped: install PyMuPDF (pip install pymupdf) or put Poppler on PATH.")
+    print("PNG not written. Install PyMuPDF with: pip install pymupdf")
     return False
 
 
 def main() -> int:
+    if OUTPUT not in ("png", "pdf", "both"):
+        raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
     font_reg, font_bold = resolve_fonts()
     check_text_fits(font_reg, font_bold if BOLD_TITLES else font_reg)
 
-    pdf_path = HERE / f"{STEM}.pdf"
-    png_path = HERE / f"{STEM}.png"
+    keep_pdf = OUTPUT in ("pdf", "both")
+    with tempfile.TemporaryDirectory() as tmp:
+        pdf_dir = HERE if keep_pdf else Path(tmp)
+        pdf_path = pdf_dir / f"{STEM}.pdf"
+        build_pdf(pdf_path, font_reg, font_bold)
+        if keep_pdf:
+            print(f"wrote {pdf_path}  "
+                  f"({W * CANVAS_SCALE:.0f} x {H * CANVAS_SCALE:.0f} pt)")
 
-    build_pdf(pdf_path, font_reg, font_bold)
-    print(f"wrote {pdf_path}  ({W * CANVAS_SCALE:.0f} x {H * CANVAS_SCALE:.0f} pt)")
-
-    if export_png(pdf_path, png_path):
-        print(f"wrote {png_path}  ({PNG_DPI} DPI)")
+        if OUTPUT in ("png", "both"):
+            png_path = HERE / f"{STEM}.png"
+            if export_png(pdf_path, png_path):
+                print(f"wrote {png_path}  ({PNG_DPI} DPI)")
     return 0
 
 

@@ -1,48 +1,37 @@
 """
 fig_subgrad_repairing.py
 
-Schematic for Appendix C, Test 2: how a rainflow re-pairing produces a corner in
-the degradation cost.
+Schematic for Appendix C, Test 2: how a rainflow re-pairing produces a corner in the degradation cost.
 
-The figure carries no data from a run. It is a drawn explanation of the
-mechanism, and the caption says so. Two panels:
+The figure carries no data from a run. It is a drawn explanation of the mechanism, and the caption says so. Two panels:
 
-  left   a short state-of-charge trace with one ambiguous excursion. The
-         perturbed time step t is marked. Everything to the right of t lifts
-         together, so only the swing crossing t changes size. The counter can
-         read the excursion as a cycle in its own right or as part of a larger
+  left   a short state-of-charge trace with one ambiguous excursion. The perturbed time step t is marked. Everything to the right of t lifts
+         together, so only the swing crossing t changes size. The counter can read the excursion as a cycle in its own right or as part of a larger
          one, and the two readings are drawn as arcs.
 
-  right  the resulting degradation cost as a function of the charging power at
-         that one time step. The two readings meet at the tie, so the cost is
-         continuous, but they arrive with different slopes. The two one-sided
-         difference quotients of Equation eq:app_sg_quotients are the slopes of
-         the two branches, and the sub-differential is the closed interval
-         between them.
+  right  the resulting degradation cost as a function of the charging power at that one time step. The two readings meet at the tie, so the cost is
+         continuous, but they arrive with different slopes. The two one-sided difference quotients of Equation eq:app_sg_quotients are the slopes of
+         the two branches, and the sub-differential is the closed interval between them.
 
-Reproducible in VS Code on Windows. Depends only on numpy, matplotlib and
-thesis_style.py, which is located by walking up from this file. Writes a PDF
-first and a PNG at 300 DPI beside it.
+Reproducible in VS Code on Windows. Depends only on numpy, matplotlib and the shared style module. Output format is set by OUTPUT below; files are written
+beside this script.
 """
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch
 
-# --- locate thesis_style.py (lives in this folder or a parent) ---------------
-SCRIPT_DIR = Path(__file__).resolve().parent
-for _p in [SCRIPT_DIR, *SCRIPT_DIR.parents]:
-    if (_p / "thesis_style.py").exists():
-        sys.path.insert(0, str(_p))
-        break
-from thesis_style import apply_thesis_style, figsize, FS_ANNOT  # noqa: E402
+from degradation.style import apply_thesis_style, figsize, FS_ANNOT
 
-OUT_DIR = SCRIPT_DIR / "Figures"
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"                    # "png", "pdf" or "both"
+STEM = "fig_subgrad_repairing"     # output filename without extension
+
+OUT_DIR = Path(__file__).resolve().parent
 DPI = 300
 
 # Schematic trace. Turning points only; the counter sees nothing else.
@@ -93,8 +82,8 @@ def panel_trace(ax, pal):
     ax.set_ylim(0.0, 1.35)
     ax.set_xticks([])
     ax.set_yticks([0.3, 0.6, 0.9])
-    ax.set_xlabel("time step")
-    ax.set_ylabel("state of charge  [-]")
+    ax.set_xlabel("Time step")
+    ax.set_ylabel("State of charge  (\u2013)")
     for s_ in ("top", "right"):
         ax.spines[s_].set_visible(False)
 
@@ -130,24 +119,30 @@ def panel_cost(ax, pal):
     ax.set_xticks([0.0])
     ax.set_xticklabels(["tie"])
     ax.set_yticks([])
-    ax.set_xlabel("charging power at step $t$")
-    ax.set_ylabel("degradation cost  [EUR]")
+    ax.set_xlabel("Charging power $p_t^{\\mathrm{ch}}$  (MW)")
+    ax.set_ylabel("Degradation cost $f$  (EUR)")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
 
 
 def main() -> None:
+    if OUTPUT not in ("png", "pdf", "both"):
+        raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+
     pal = apply_thesis_style(palette="brand", usetex=False)
     fig, axes = plt.subplots(1, 2, figsize=figsize(1.0, aspect=0.40))
     panel_trace(axes[0], pal)
     panel_cost(axes[1], pal)
 
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    fig.savefig(OUT_DIR / "fig_subgrad_repairing.pdf")
-    fig.savefig(OUT_DIR / "fig_subgrad_repairing.png", dpi=DPI)
+    if OUTPUT in ("pdf", "both"):
+        path = OUT_DIR / f"{STEM}.pdf"
+        fig.savefig(path)
+        print(f"saved to {path}")
+    if OUTPUT in ("png", "both"):
+        path = OUT_DIR / f"{STEM}.png"
+        fig.savefig(path, dpi=DPI)
+        print(f"saved to {path}")
     plt.close(fig)
-    print(f"saved to {OUT_DIR / 'fig_subgrad_repairing.pdf'}")
-    print(f"saved to {OUT_DIR / 'fig_subgrad_repairing.png'}")
 
 
 if __name__ == "__main__":
