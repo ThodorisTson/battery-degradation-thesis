@@ -1,9 +1,10 @@
 """
 economics.py — Shared economic primitives for the battery sweep models.
 
-Single source of truth for the conventions that MUST stay identical across
-    planB_2d_parameter_sweep_a_npv.py
-    run_battery_xu_shi_degradation_v5_2__Castillo_sweep_.py
+Single source of truth for the conventions that must stay identical across
+    scripts/run_sizing_sweep.py
+    scripts/run_window_sweep.py
+    scripts/run_baseline.py
 
 Covered here:
   * symmetric round-trip efficiency split (PCU included)
@@ -48,8 +49,8 @@ __all__ = [
 
 HOURS_PER_YEAR = 8760.0
 
-# ── Headline revenue basis (reporting convention; PENDING supervisor) ────────
-# Which battery-NPV definition the run files treat as the primary/headline number and select the optimum on. Both bases are always computed and reported; this only chooses the label + the optimum key.
+# ── Headline revenue basis (reporting convention) ────────────────────────────
+# # Which battery-NPV definition the run files treat as the primary/headline number and select the optimum on. Both bases are always computed and reported; this only chooses the label + the optimum key.
 #   "arbitrage" : price · storage_p           (battery-as-asset; SHIPP a_npv)
 #   "marginal"  : total plant − wind-only     (+ curtailment recovery)
 # At the IEA Task 50 site the two differ by ~0.02% (grid ~ wind rating).
@@ -69,8 +70,7 @@ def eta_symmetric(rte_ac: float) -> float:
 def discount_weights(r: float, n_year: int) -> np.ndarray:
     """Per-year discount factors (1+r)^-k for k = 1 .. n_year-1.
 
-    weights[0] is year 1, weights[-1] is year n_year-1 (SHIPP convention).
-    See the HORIZON FLIP note at the top of this file.
+    weights[0] is year 1, weights[-1] is year n_year-1 (SHIPP convention). See "Discounting horizon" at the top of this file.
     """
     return np.array([(1.0 + r) ** (-k) for k in range(1, n_year)], dtype=float)
 
@@ -162,7 +162,7 @@ def test_matches_shipp_kernel(r: float = 0.03, n_year: int = 20) -> None:
     """annuity_factor must equal the SHIPP kernel factor npf.npv(r, ones(n))-1.
 
     npf.npv(r, ones(n)) = sum_{i=0}^{n-1} (1+r)^-i, so the kernel factor is sum_{i=1}^{n-1} (1+r)^-i. We replicate that arithmetic directly here so the check does not depend on numpy_financial. 
-    Passing == we are on SHIPP's 19-year convention (see HORIZON FLIP note).
+    Passing means the 19-year convention is intact.
     """
     kernel_factor = sum((1.0 + r) ** (-i) for i in range(1, n_year))
     got = annuity_factor(r, n_year)
