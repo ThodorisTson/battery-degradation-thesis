@@ -1,41 +1,44 @@
 r"""
-fig34_xu_sdelta_d2.py   (Fig. 3.4)
+xu_sdelta_second_derivative.py   (thesis label fig:xu_sdelta_d2)
 
-Second derivative of the physical reference model cycle amplitude stress
-function. Shows the non-convex region below the sign change at delta = 0.1437.
+Second derivative of the physical reference model cycle amplitude stress function. Shows the non-convex region below the sign change at delta = 0.1437.
 
 Rewritten from the standalone slide version:
   1. Driven by thesis_style.py -- fonts, colours, line widths, output format.
-  2. x-axis label "Cycle depth of discharge" -> "Cycle amplitude".
-     delta is the per-cycle amplitude; DoD is the window parameter d = 1 - sigma_min.
-  3. np.clip on the DATA removed. The old clip at 1e-4 capped the curve at 10 and
-     produced a flat plateau above delta ~ 0.55 that is not in the function
+  2. x-axis label "Cycle depth of discharge" -> "Cycle amplitude". delta is the per-cycle amplitude; DoD is the window parameter d = 1 - sigma_min.
+  3. np.clip on the DATA removed. The old clip at 1e-4 capped the curve at 10 and produced a flat plateau above delta ~ 0.55 that is not in the function
      (S_delta'' reaches 34.5 at delta = 0.80). ylim now clips the rendering only.
   4. Title removed; the caption carries the explanation.
-  5. PDF written first, PNG for preview.
+  5. Output format is selected by OUTPUT below.
 
-Requires thesis_style.py in the same folder (or on PYTHONPATH).
 Runs in VS Code on Windows: matplotlib + numpy only, bundled font, no LaTeX.
 """
-import sys
 from pathlib import Path
-
-# --- path guard ----------------------------------------------------------- #
-for _d in Path(__file__).resolve().parents:
-    if (_d / "thesis_style.py").exists():
-        sys.path.insert(0, str(_d))
-        break
-else:
-    raise FileNotFoundError("thesis_style.py not found in any parent folder")
 
 import numpy as np
 import matplotlib.pyplot as plt
-from thesis_style import (apply_thesis_style, figsize, TUDELFT,
-                          FS_ANNOT, FS_LEGEND)
+from degradation.style import (apply_thesis_style, figsize, TUDELFT,
+                               FS_ANNOT, FS_LEGEND)
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"     # "png", "pdf" or "both"
+DPI = 300
+
+
+def save(fig, out_dir, stem):
+    """Write the formats OUTPUT asks for, beside the calling script."""
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / f"{stem}.pdf")
+        print(f"  wrote {stem}.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / f"{stem}.png", dpi=DPI)
+        print(f"  wrote {stem}.png  ({DPI} dpi)")
+
 
 P = apply_thesis_style(palette="brand", usetex=False)
 
 # -- Model parameters ------------------------------------------------------ #
+# Xu coefficients: Table 2.1 (k_d1, k_d2, k_d3). Inflection: Equation 2.11.
 K1, K2_EXP, K3C = 1.40e5, -0.501, -1.23e5
 BOUNDARY = 0.1437          # sign change of S_delta''
 
@@ -77,7 +80,6 @@ ax.set_ylabel(r"$S_\delta''(\delta) \times 10^5$  (–)")
 ax.legend(fontsize=FS_LEGEND, frameon=False, loc='upper left')
 
 # -- Save ------------------------------------------------------------------ #
-out = Path(__file__).parent
-fig.savefig(out / 'fig34_xu_sdelta_d2.pdf')
-fig.savefig(out / 'fig34_xu_sdelta_d2.png', dpi=300)
-print(f"Saved -> {out / 'fig34_xu_sdelta_d2.pdf'} and .png")
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+save(fig, Path(__file__).parent, "fig34_xu_sdelta_d2")

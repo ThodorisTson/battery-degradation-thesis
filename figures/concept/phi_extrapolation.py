@@ -1,47 +1,49 @@
 r"""
-fig35_phi_extrapolation.py   (Fig. 3.5)
+phi_extrapolation.py   (thesis label fig:phi_extrapolation)
 
-Two-panel comparison of the physical reference model stress function S_delta and
-the fitted polynomial Phi_shi. Top: function values. Bottom: second derivatives,
+Two-panel comparison of the physical reference model stress function S_delta and the fitted polynomial Phi_shi. Top: function values. Bottom: second derivatives,
 showing that Phi_shi stays convex where S_delta does not.
 
 Rewritten from the standalone slide version:
   1. Driven by thesis_style.py -- fonts, colours, line widths, output format.
   2. x-axis label "Cycle depth of discharge" -> "Cycle amplitude".
-  3. np.clip on the DATA removed. The old clip at 1e-4 capped both curves at 10,
-     producing flat plateaus that are not in the functions (S_delta'' reaches
-     34.5 at delta = 0.80, Phi_shi'' reaches 17.0 at delta = 0.02).
-     ylim now clips the rendering only.
+  3. np.clip on the DATA removed. The old clip at 1e-4 capped both curves at 10, producing flat plateaus that are not in the functions 
+    (S_delta'' reaches 34.5 at delta = 0.80, Phi_shi'' reaches 17.0 at delta = 0.02). ylim now clips the rendering only.
   4. Suptitle removed; the caption carries the explanation.
-  5. \Phi_{shi} -> \Phi_\mathrm{shi} so the subscript is upright, matching
-     Chapters 2 and 3 and Figure 3.6.
-  6. PDF written first, PNG for preview.
+  5. \Phi_{shi} -> \Phi_\mathrm{shi} so the subscript is upright, matching Chapters 2 and 3 and Figure 3.6.
+  6. Output format is selected by OUTPUT below.
 
-Coefficients k3 and k4 are the fit over delta in [0.15, 0.80] for the 10-90%
-SoC window. Regenerate if degradation_shi.fit_shi_polynomial(0.10, 0.90) changes.
+Coefficients k3 and k4 are the fit over delta in [0.15, 0.80] for the 10-90% SoC window. Regenerate if degradation.shi.fit_shi_polynomial(0.10, 0.90) changes.
 
-Requires thesis_style.py in the same folder (or on PYTHONPATH).
 Runs in VS Code on Windows: matplotlib + numpy only, bundled font, no LaTeX.
 """
-import sys
 from pathlib import Path
-
-# --- path guard ----------------------------------------------------------- #
-for _d in Path(__file__).resolve().parents:
-    if (_d / "thesis_style.py").exists():
-        sys.path.insert(0, str(_d))
-        break
-else:
-    raise FileNotFoundError("thesis_style.py not found in any parent folder")
 
 import numpy as np
 import matplotlib.pyplot as plt
-from thesis_style import (apply_thesis_style, figsize, TUDELFT,
-                          FS_ANNOT, FS_LEGEND)
+from degradation.style import (apply_thesis_style, figsize, TUDELFT,
+                               FS_ANNOT, FS_LEGEND)
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"     # "png", "pdf" or "both"
+DPI = 300
+
+
+def save(fig, out_dir, stem):
+    """Write the formats OUTPUT asks for, beside the calling script."""
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / f"{stem}.pdf")
+        print(f"  wrote {stem}.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / f"{stem}.png", dpi=DPI)
+        print(f"  wrote {stem}.png  ({DPI} dpi)")
+
 
 P = apply_thesis_style(palette="brand", usetex=False)
 
 # -- Model parameters ------------------------------------------------------ #
+# Xu coefficients: Table 2.1 (k_d1, k_d2, k_d3). Inflection: Equation 2.11.
+# Shi coefficients and the fitting floor: Equation 3.10 and Section 3.5.2.
 K1, K2_EXP, K3C     = 1.40e5, -0.501, -1.23e5
 K3_SHI, K4_SHI      = 3.2418e-5, 1.1785     # fit over [0.15, 0.80], 10-90% window
 BOUNDARY, FIT_FLOOR = 0.1437, 0.15
@@ -118,7 +120,6 @@ ax2.legend(fontsize=FS_LEGEND, frameon=False, loc='center right',
            handlelength=2.0, labelspacing=0.35)
 
 # -- Save ------------------------------------------------------------------ #
-out = Path(__file__).parent
-fig.savefig(out / 'fig35_phi_extrapolation.pdf')
-fig.savefig(out / 'fig35_phi_extrapolation.png', dpi=300)
-print(f"Saved -> {out / 'fig35_phi_extrapolation.pdf'} and .png")
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+save(fig, Path(__file__).parent, "fig35_phi_extrapolation")

@@ -1,35 +1,38 @@
 r"""
-rainflow_cycle_illustration_v2.py   (Fig. 2.1)
+rainflow_cycle_illustration_v2.py   (thesis label fig:rainflow_cycles)
 
 Changes vs v1:
-  1. Removed the marker at (10, 0.25). The trajectory falls monotonically from
-     0.70 at t=6 through 0.25 at t=10 to 0.15 at t=12, so that point is a slope
+  1. Removed the marker at (10, 0.25). The trajectory falls monotonically from 0.70 at t=6 through 0.25 at t=10 to 0.15 at t=12, so that point is a slope
      change, not a local extremum, and is not a turning point.
-  2. Dashed discharge bracket extended from t=6->10 to t=6->12, so it spans a
-     real half-cycle (0.70 -> 0.15, delta = 0.55) instead of a partial descent.
-  3. Dotted guide lines added from the rising limb to the delta/sigma arrow, so
-     the annotation is visually attached to the half-cycle it describes
+  2. Dashed discharge bracket extended from t=6->10 to t=6->12, so it spans a real half-cycle (0.70 -> 0.15, delta = 0.55) instead of a partial descent.
+  3. Dotted guide lines added from the rising limb to the delta/sigma arrow, so the annotation is visually attached to the half-cycle it describes
      (0.15 -> 0.85, delta = 0.70, sigma = 0.50).
   4. Duplicate numpy / pyplot imports removed.
+  5. Output format is selected by OUTPUT below.
 
-Requires thesis_style.py in the same folder (or on PYTHONPATH).
 Runs in VS Code on Windows: matplotlib + numpy only, bundled font, no LaTeX.
 """
-import sys
 from pathlib import Path
-
-# --- path guard: locate the shared style module --------------------------- #
-for _d in Path(__file__).resolve().parents:
-    if (_d / "thesis_style.py").exists():
-        sys.path.insert(0, str(_d))
-        break
-else:
-    raise FileNotFoundError("thesis_style.py not found in any parent folder")
 
 import numpy as np
 import matplotlib.pyplot as plt
-from thesis_style import (apply_thesis_style, figsize, TUDELFT,
-                          FS_BASE, FS_LABEL, FS_ANNOT)
+from degradation.style import (apply_thesis_style, figsize, TUDELFT,
+                               FS_BASE, FS_LABEL, FS_ANNOT)
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"     # "png", "pdf" or "both"
+DPI = 300
+
+
+def save(fig, out_dir, stem):
+    """Write the formats OUTPUT asks for, beside the calling script."""
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / f"{stem}.pdf")
+        print(f"  wrote {stem}.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / f"{stem}.png", dpi=DPI)
+        print(f"  wrote {stem}.png  ({DPI} dpi)")
+
 
 P = apply_thesis_style(palette="brand", usetex=False)
 
@@ -126,7 +129,6 @@ ax.text(t_brk - 1.0, sigma_B + 0.02, r'$\sigma$ = %.2f' % sigma_B,
         va='bottom', ha='right', fontsize=FS_BASE, color=c_ann, style='italic')
 
 # -- Save ------------------------------------------------------------------ #
-out = Path(__file__).parent
-fig.savefig(out / 'rainflow_cycle_illustration.pdf')
-fig.savefig(out / 'rainflow_cycle_illustration.png', dpi=300)
-print(f"Saved -> {out / 'rainflow_cycle_illustration.pdf'} and .png")
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
+save(fig, Path(__file__).parent, "rainflow_cycle_illustration")

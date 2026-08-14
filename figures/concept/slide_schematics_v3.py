@@ -1,9 +1,9 @@
 r"""
 slide_schematics_v3.py  (patched from v2)
 
-Produces:
-  Fig 2.2 -- physical reference model stress factors  S_delta(delta), S_sigma(sigma)
-  Fig 3.6 -- polynomial model  Phi_shi(delta)  and its second derivative
+Produces two figures:
+  fig:xu_stress      -- physical reference model stress factors S_delta, S_sigma
+  fig:shi_polynomial -- polynomial model Phi_shi(delta) and its second derivative
 
 Changes vs v2:
   1. Axis label "Cycle depth of discharge" -> "Cycle amplitude" (3 occurrences).
@@ -17,26 +17,35 @@ Changes vs v2:
   6. Annotation font size unified to FS_ANNOT across both figures.
   7. "(-)" added to every y-axis label for consistency with the x-axis labels.
   8. Headroom added above the Phi'' curve, which previously touched the top spine.
+  9. Output format is selected by OUTPUT below.
 """
-import sys
 from pathlib import Path
-
-# --- path guard ----------------------------------------------------------- #
-for _d in Path(__file__).resolve().parents:
-    if (_d / "thesis_style.py").exists():
-        sys.path.insert(0, str(_d))
-        break
-else:
-    raise FileNotFoundError("thesis_style.py not found in any parent folder")
 
 import numpy as np
 import matplotlib.pyplot as plt
-from thesis_style import (apply_thesis_style, figsize, TUDELFT,
-                          FS_BASE, FS_LABEL, FS_ANNOT)
+from degradation.style import (apply_thesis_style, figsize, TUDELFT,
+                               FS_BASE, FS_LABEL, FS_ANNOT)
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "png"     # "png", "pdf" or "both"
+DPI = 300
+
+
+def save(fig, out_dir, stem):
+    """Write the formats OUTPUT asks for, beside the calling script."""
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / f"{stem}.pdf")
+        print(f"  wrote {stem}.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / f"{stem}.png", dpi=DPI)
+        print(f"  wrote {stem}.png  ({DPI} dpi)")
+
 
 P = apply_thesis_style(palette="brand", usetex=False)
 
 # -- Model parameters ------------------------------------------------------ #
+# Xu coefficients: Table 2.1 (k_d1, k_d2, k_d3), Section 2.6.2 (k_sigma,
+# sigma_ref). Shi coefficients: Equation 3.10.
 K1, K2_EXP, K3C  = 1.40e5, -0.501, -1.23e5
 K_SIGMA, SIG_REF = 1.04, 0.50
 K3_SHI, K4_SHI   = 3.2418e-5, 1.1785
@@ -67,6 +76,9 @@ C_SD  = P["fill_a"]      # S_delta   -- TU Delft blue    #0076C2
 C_SS  = P["fill_b"]      # S_sigma   -- TU Delft orange  #EC6842
 C_PHI = P["secondary"]   # Phi_shi   -- TU Delft dark red #A50034
 C_CV  = TUDELFT["dgreen"]  # Phi''   -- diagnostic curve, not a model branch
+
+if OUTPUT not in ("png", "pdf", "both"):
+    raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
 
 OUT = Path(__file__).parent
 
@@ -105,10 +117,8 @@ ax2.set_xlabel(r'Cycle mean SoC $\sigma$  (–)')
 ax2.set_ylabel(r'$S_\sigma(\sigma)$  (–)')
 ax2.set_xlim(0.10, 0.90)
 
-fig22.savefig(OUT / 'fig22_xu_stress.pdf')
-fig22.savefig(OUT / 'fig22_xu_stress.png', dpi=300)
+save(fig22, OUT, 'fig22_xu_stress')
 plt.close(fig22)
-print("Fig 2.2 saved.")
 
 # ========================================================================== #
 # Fig 3.6 -- polynomial model and its second derivative
@@ -150,7 +160,5 @@ ax4.set_xlim(0.02, 0.80)
 # CHANGED (8): 8% headroom so the curve no longer touches the top spine
 ax4.set_ylim(0, (phi_d2 * 1e5).max() * 1.08)
 
-fig36.savefig(OUT / 'fig36_shi_convex.pdf')
-fig36.savefig(OUT / 'fig36_shi_convex.png', dpi=300)
+save(fig36, OUT, 'fig36_shi_convex')
 plt.close(fig36)
-print("Fig 3.6 saved.")
