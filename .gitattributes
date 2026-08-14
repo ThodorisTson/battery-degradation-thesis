@@ -1,0 +1,10 @@
+﻿# Normalise line endings. The source files mix CRLF and LF; without this a
+# collaborator on Linux or macOS sees every file as entirely rewritten.
+* text=auto eol=lf
+
+# Binary, never touched
+*.png binary
+*.pdf binary
+*.npy binary
+*.npz binary
+*.nc  binary

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wp2-battery-degradation"
+version = "1.0.0"
+description = "Battery degradation modelling for integrated design of wind-battery hybrid power plants"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Thodoris Tsonopoulos"}]
+
+dependencies = [
+    "numpy>=1.24",
+    "numpy-financial",
+    "pandas>=2.0",
+    "scipy",
+    "matplotlib",
+    "pyyaml",
+    "xarray",
+    "rainflow",
+    "pyomo",
+    "py_wake",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]

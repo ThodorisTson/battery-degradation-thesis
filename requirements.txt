@@ -1,0 +1,8 @@
+# SHIPP, pinned to the exact commit used for every result in the thesis.
+# See SHIPP_MODIFICATIONS.md for what differs from upstream and why this
+# commit rather than the current release.
+shipp @ git+https://github.com/ThodorisTson/shipp@REPLACE_WITH_COMMIT_SHA
+
+# This project, installed in editable mode. Pulls in the dependencies
+# declared in pyproject.toml.
+-e .
