@@ -12,15 +12,14 @@ token_*
 *.key
 gurobi.lic
 
-# Simulation output (regenerate by running scripts/)
-results/**
-!results/.gitkeep
-
 # Large raw data
 *.nc
-*.npz
 
 # OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
+
+# Note: results/ is tracked, not ignored. The simulation runs are frozen and a
+# full sweep takes hours, so the outputs the thesis figures read from are
+# committed. Check `git status` before committing after a new run.

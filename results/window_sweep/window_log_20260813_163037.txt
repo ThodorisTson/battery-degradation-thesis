@@ -1,0 +1,1613 @@
+================================================================================
+WP2 BATTERY OPTIMIZATION + DEGRADATION  v5.4 (wp2_econ integration)
+Shi (2018) + Xu calendar | multi-year NPV | DoD (SoC-window) sweep
+================================================================================
+
+[1/4] Loading WP2 configuration...
+
+[2/4] Preparing data...
+  Horizon: 8,760 h (365.0 days)
+  Mean price: 219.02 EUR/MWh
+
+[3/4] Running PyWake simulation...
+  Wind mean: 140.6 MW | peak: 325.0 MW
+  Battery (YAML default): 150 MW / 300 MWh
+  Fixed for DoD study   : E=550 MWh, P=175 MW (E/P=3.1h)
+  Grid: 325 MW | RTE(ac): 91.0%
+  e_cost: 245 EUR/kWh | N_YEARS: 20 | EOL: 70%
+
+[4/4] Running DoD sweep at fixed E=550 MWh, P=175 MW...
+
+======================================================================
+DoD SWEEP at fixed E=550 MWh, P=175 MW (E/P=3.1h)
+8 windows | LP solves: 8 x 20 yr = 160
+======================================================================
+  [skip]  width window 0.30-0.70: Fitted k4=0.9078 ≤ 1 — Shi polynomial not globally convex. Check Xu params or narrow SoC window.
+
+[2/8]  width | window 20-80% | center=0.50 width=0.60 | k4=1.032 R2=0.988
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+C:\Users\User\Desktop\Thesis\shipp\src\shipp\kernel_pyomo.py:326: RuntimeWarning: Failed error check in solve_lp_pyomo
+  warnings.warn('Failed error check in solve_lp_pyomo', RuntimeWarning)
+     1   92.912    0.01989    0.01989     15665.2     6.22          
+Failed error check
+Error : 4.74e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.607    0.02004    0.03993     14858.1     5.84          
+Failed error check
+Error : 4.66e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.764    0.02009    0.06001     14590.4     5.79          
+Failed error check
+Error : 4.60e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.992    0.02013    0.08014     14374.4     5.81          
+Failed error check
+Error : 4.54e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   85.255    0.02017    0.10031     14164.2     5.79          
+Failed error check
+Error : 4.48e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   83.549    0.02021    0.12052     13957.0     5.81          
+Failed error check
+Error : 4.43e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   81.875    0.02025    0.14076     13751.6     5.80          
+Failed error check
+Error : 4.37e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   80.230    0.02029    0.16105     13547.3     5.91          
+Failed error check
+Error : 4.32e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   78.616    0.02033    0.18137     13344.7     5.87          
+Failed error check
+Error : 4.26e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   77.031    0.02036    0.20174     13144.5     5.69          
+Failed error check
+Error : 4.21e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   75.476    0.02040    0.22214     12946.7     7.06          
+Failed error check
+Error : 4.16e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   73.949    0.02044    0.24258     12751.5     5.90          
+Failed error check
+Error : 4.11e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   72.450    0.02048    0.26306     12558.5     5.81          
+Failed error check
+Error : 4.06e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   70.978    0.02052    0.28358     12367.4     5.27          
+Failed error check
+Error : 4.01e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   69.533    0.02057    0.30415     12178.4     5.57       YES
+  *** Battery #1 replaced at end of year 15 ***
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   92.912    0.01989    0.01989     15665.2     5.33          
+Failed error check
+Error : 4.74e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   90.607    0.02004    0.03993     14858.1     5.53          
+Failed error check
+Error : 4.66e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   88.764    0.02009    0.06001     14590.4     6.76          
+Failed error check
+Error : 4.60e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   86.992    0.02013    0.08014     14374.4     5.72          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 112.5s (111.5s LP)
+  Final SoH: 86.99% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     36.20 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    199.49 MEUR
+    NPV (multi-year) :     13.49 MEUR  ← corrected
+    NPV (no-deg)     :     74.59 MEUR
+    NPV (Plan B)     :     63.30 MEUR
+    Bat rev yr1→yr20 : 15665 → 14374 kEUR  (-8.2%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    199.38 MEUR
+    NPV (multi-year) :     13.37 MEUR
+    NPV (no-deg)     :     74.47 MEUR
+    NPV (Plan B)     :     63.19 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3004.87 MEUR
+    NPV (multi-year) :   2818.87 MEUR
+    NPV (no-deg)     :   2879.97 MEUR
+    Total rev yr1→yr20: 211520 → 210229 kEUR  (-0.6%)
+  ──────────────────────────────────────────────────────────
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.839    0.02036    0.02036     15665.2     5.75          
+Failed error check
+Error : 4.73e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.515    0.02052    0.04089     14849.6     5.74          
+Failed error check
+Error : 4.66e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.635    0.02058    0.06147     14579.7     6.37          
+Failed error check
+Error : 4.59e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.822    0.02062    0.08209     14359.1     7.13          
+Failed error check
+Error : 4.53e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   85.046    0.02067    0.10276     14144.0     5.82          
+Failed error check
+Error : 4.48e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   83.303    0.02071    0.12347     13931.9     6.42          
+Failed error check
+Error : 4.42e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   81.592    0.02075    0.14422     13721.8     5.58          
+Failed error check
+Error : 4.36e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   79.913    0.02079    0.16501     13512.6     6.33          
+Failed error check
+Error : 4.31e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   78.265    0.02084    0.18585     13305.4     5.53          
+Failed error check
+Error : 4.25e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   76.648    0.02088    0.20673     13100.7     5.52          
+Failed error check
+Error : 4.20e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   75.061    0.02092    0.22765     12898.6     5.37          
+Failed error check
+Error : 4.15e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   73.503    0.02097    0.24862     12699.2     5.63          
+Failed error check
+Error : 4.10e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   71.975    0.02101    0.26963     12501.9     5.35          
+Failed error check
+Error : 4.04e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   70.476    0.02105    0.29068     12306.6     5.66       YES
+  *** Battery #1 replaced at end of year 14 ***
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   92.839    0.02036    0.02036     15665.2     5.37          
+Failed error check
+Error : 4.73e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   90.515    0.02052    0.04089     14849.6     5.92          
+Failed error check
+Error : 4.66e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   88.635    0.02058    0.06147     14579.7     7.47          
+Failed error check
+Error : 4.59e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   86.822    0.02062    0.08209     14359.1     6.46          
+Failed error check
+Error : 4.53e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   85.046    0.02067    0.10276     14144.0     6.18          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 114.2s (113.6s LP)
+  Final SoH: 85.05% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     37.29 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    200.45 MEUR
+    NPV (multi-year) :     13.36 MEUR  ← corrected
+    NPV (no-deg)     :     74.59 MEUR
+    NPV (Plan B)     :     63.03 MEUR
+    Bat rev yr1→yr20 : 15665 → 14144 kEUR  (-9.7%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    200.33 MEUR
+    NPV (multi-year) :     13.25 MEUR
+    NPV (no-deg)     :     74.47 MEUR
+    NPV (Plan B)     :     62.92 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3005.83 MEUR
+    NPV (multi-year) :   2818.74 MEUR
+    NPV (no-deg)     :   2879.97 MEUR
+    Total rev yr1→yr20: 211520 → 209998 kEUR  (-0.7%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   13.5M  fd=0.01989  repl=1  SoH_end=87.0%  mean_dod=0.367  cyc<0.15=0.28 fd<0.15=0.0204 (xu 0.0266)  yr1Xu/Shi=1.07
+  [Xu ] NPV=   13.4M  fd=0.02036  repl=1  SoH_end=85.0%  full-model NPV Xu/Shi=0.991
+        t=226.7s
+
+[3/8]   both | window 10-90% | center=0.50 width=0.80 | k4=1.179 R2=0.963
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.553    0.02234    0.02234     18882.4     6.14          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.128    0.02266    0.04500     18003.5     6.12          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.077    0.02277    0.06776     17708.5     6.68          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.084    0.02286    0.09062     17455.6     6.21          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   84.131    0.02296    0.11358     17208.5     6.33          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   82.214    0.02305    0.13663     16964.0     6.05          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   80.333    0.02314    0.15977     16705.4     6.30          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   78.489    0.02322    0.18299     16438.7     6.34          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   76.681    0.02331    0.20629     16174.3     7.29          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   74.908    0.02339    0.22969     15912.7     7.74          
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   73.165    0.02354    0.25323     15651.4     7.82          
+Failed error check
+Error : 4.89e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   71.457    0.02362    0.27685     15389.1     6.06          
+Failed error check
+Error : 4.81e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   69.784    0.02369    0.30054     15129.3     6.18       YES
+  *** Battery #1 replaced at end of year 13 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   92.553    0.02234    0.02234     18882.4     6.01          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   90.128    0.02266    0.04500     18003.5     6.33          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   88.077    0.02277    0.06776     17708.5     6.21          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   86.084    0.02286    0.09062     17455.6     6.27          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   84.131    0.02296    0.11358     17208.5     6.00          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   82.214    0.02305    0.13663     16964.0     7.22          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 124.6s (123.3s LP)
+  Final SoH: 82.21% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     38.41 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.69 MEUR
+    NPV (multi-year) :     56.48 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    108.00 MEUR
+    Bat rev yr1→yr20 : 18882 → 16964 kEUR  (-10.2%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    244.57 MEUR
+    NPV (multi-year) :     56.37 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    107.88 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3050.07 MEUR
+    NPV (multi-year) :   2861.86 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 212819 kEUR  (-0.9%)
+  ──────────────────────────────────────────────────────────
+  ✓ storage_e_yr01_8760h.npy          (8760 steps, Year 1)
+  ✓ storage_e_20yr_8760h_stack.npy  (19×8760, all years)
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.376    0.02365    0.02365     18882.4     7.42          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   89.877    0.02405    0.04770     17982.2     7.64          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   87.713    0.02419    0.07190     17677.7     7.31          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   85.604    0.02432    0.09622     17410.5     7.91          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   83.536    0.02445    0.12067     17148.7     8.01          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   81.507    0.02459    0.14526     16889.0     7.47          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   79.519    0.02470    0.16995     16605.8     6.97          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   77.571    0.02480    0.19476     16322.3     7.11          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   75.662    0.02491    0.21967     16041.7     7.13          
+Failed error check
+Error : 5.00e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   73.787    0.02510    0.24477     15763.9     7.33          
+Failed error check
+Error : 4.92e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   71.951    0.02520    0.26997     15483.0     7.75          
+Failed error check
+Error : 4.84e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   70.154    0.02529    0.29526     15204.5     6.65       YES
+  *** Battery #1 replaced at end of year 12 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   92.376    0.02365    0.02365     18882.4     5.59          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   89.877    0.02405    0.04770     17982.2     5.96          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   87.713    0.02419    0.07190     17677.7     5.62          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   85.604    0.02432    0.09622     17410.5     5.71          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   83.536    0.02445    0.12067     17148.7     5.64          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   81.507    0.02459    0.14526     16889.0     5.66          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   79.519    0.02470    0.16995     16605.8     5.59          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 129.1s (128.5s LP)
+  Final SoH: 79.52% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     39.56 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.84 MEUR
+    NPV (multi-year) :     55.48 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    107.25 MEUR
+    Bat rev yr1→yr20 : 18882 → 16606 kEUR  (-12.1%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    244.72 MEUR
+    NPV (multi-year) :     55.36 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    107.14 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3050.22 MEUR
+    NPV (multi-year) :   2860.86 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 212460 kEUR  (-1.1%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   56.5M  fd=0.02234  repl=1  SoH_end=82.2%  mean_dod=0.466  cyc<0.15=0.26 fd<0.15=0.0128 (xu 0.0187)  yr1Xu/Shi=1.14
+  [Xu ] NPV=   55.5M  fd=0.02365  repl=1  SoH_end=79.5%  full-model NPV Xu/Shi=0.982
+        t=253.8s
+
+[4/8]  width | window 0-100% | center=0.50 width=1.00 | k4=1.374 R2=0.896
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+     1   92.067    0.02609    0.02609     21624.3     5.81          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   89.417    0.02666    0.05275     20582.4     5.75          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   87.038    0.02686    0.07961     20220.6     5.67          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   84.716    0.02704    0.10665     19888.6     5.52          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   82.441    0.02722    0.13387     19560.6     5.56          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   80.212    0.02741    0.16128     19235.6     5.75          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   78.028    0.02760    0.18889     18913.1     5.77          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   75.889    0.02779    0.21667     18594.6     5.69          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   73.796    0.02798    0.24465     18279.3     6.31          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   71.746    0.02817    0.27282     17966.3     5.69          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   69.739    0.02837    0.30119     17653.6     5.61       YES
+  *** Battery #1 replaced at end of year 11 ***
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+    12   92.067    0.02609    0.02609     21624.3     5.67          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   89.417    0.02666    0.05275     20582.4     5.71          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   87.038    0.02686    0.07961     20220.6     5.52          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   84.716    0.02704    0.10665     19888.6     5.66          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   82.441    0.02722    0.13387     19560.6     5.75          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   80.212    0.02741    0.16128     19235.6     5.79          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   78.028    0.02760    0.18889     18913.1     5.50          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   75.889    0.02779    0.21667     18594.6     5.65          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 109.4s (108.4s LP)
+  Final SoH: 75.89% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     40.74 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    280.60 MEUR
+    NPV (multi-year) :     90.05 MEUR  ← corrected
+    NPV (no-deg)     :    159.94 MEUR
+    NPV (Plan B)     :    145.14 MEUR
+    Bat rev yr1→yr20 : 21624 → 18595 kEUR  (-14.0%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    280.48 MEUR
+    NPV (multi-year) :     89.94 MEUR
+    NPV (no-deg)     :    159.83 MEUR
+    NPV (Plan B)     :    145.03 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3085.98 MEUR
+    NPV (multi-year) :   2895.43 MEUR
+    NPV (no-deg)     :   2965.32 MEUR
+    Total rev yr1→yr20: 217479 → 214449 kEUR  (-1.4%)
+  ──────────────────────────────────────────────────────────
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+     1   91.619    0.02998    0.02998     21624.3     6.29          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   88.685    0.03092    0.06090     20522.3     6.23          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   85.951    0.03128    0.09218     20118.7     5.85          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   83.276    0.03162    0.12379     19735.6     5.89          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   80.655    0.03197    0.15577     19355.1     5.56          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   78.088    0.03234    0.18811     18977.5     5.80          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   75.577    0.03270    0.22081     18603.5     5.91          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   73.119    0.03305    0.25386     18232.8     5.81          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   70.717    0.03341    0.28727     17863.9     5.73          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   68.368    0.03378    0.32105     17495.0     5.81       YES
+  *** Battery #1 replaced at end of year 10 ***
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+    11   91.619    0.02998    0.02998     21624.3     5.66          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   88.685    0.03092    0.06090     20522.3     5.83          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   85.951    0.03128    0.09218     20118.7     5.67          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   83.276    0.03162    0.12379     19735.6     6.01          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   80.655    0.03197    0.15577     19355.1     5.61          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   78.088    0.03234    0.18811     18977.5     5.84          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   75.577    0.03270    0.22081     18603.5     6.06          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   73.119    0.03305    0.25386     18232.8     6.98          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   70.717    0.03341    0.28727     17863.9     6.48          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 113.6s (113.0s LP)
+  Final SoH: 70.72% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     41.97 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    278.27 MEUR
+    NPV (multi-year) :     86.50 MEUR  ← corrected
+    NPV (no-deg)     :    159.94 MEUR
+    NPV (Plan B)     :    142.93 MEUR
+    Bat rev yr1→yr20 : 21624 → 17864 kEUR  (-17.4%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    278.15 MEUR
+    NPV (multi-year) :     86.39 MEUR
+    NPV (no-deg)     :    159.83 MEUR
+    NPV (Plan B)     :    142.82 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3083.65 MEUR
+    NPV (multi-year) :   2891.88 MEUR
+    NPV (no-deg)     :   2965.32 MEUR
+    Total rev yr1→yr20: 217479 → 213718 kEUR  (-1.7%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   90.1M  fd=0.02609  repl=1  SoH_end=75.9%  mean_dod=0.537  cyc<0.15=0.25 fd<0.15=0.0064 (xu 0.0105)  yr1Xu/Shi=1.29
+  [Xu ] NPV=   86.5M  fd=0.02998  repl=1  SoH_end=70.7%  full-model NPV Xu/Shi=0.961
+        t=222.9s
+
+[5/8] center | window 20-100% | center=0.60 width=0.80 | k4=1.179 R2=0.963
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+     1   92.229    0.02479    0.02479     18882.4     5.88          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   89.672    0.02516    0.04994     17964.4     6.08          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   87.420    0.02528    0.07523     17652.4     5.86          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   85.227    0.02540    0.10063     17374.3    10.19          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   83.080    0.02552    0.12615     17101.6     8.25          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   80.978    0.02563    0.15178     16827.1     8.26          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   78.920    0.02574    0.17752     16530.6     7.35          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   76.907    0.02584    0.20336     16236.3     6.76          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   74.937    0.02594    0.22930     15945.4     6.92          
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   73.005    0.02612    0.25542     15655.7    10.47          
+Failed error check
+Error : 4.88e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   71.116    0.02621    0.28163     15364.8     8.16          
+Failed error check
+Error : 4.80e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   69.270    0.02631    0.30794     15077.2     6.43       YES
+  *** Battery #1 replaced at end of year 12 ***
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+    13   92.229    0.02479    0.02479     18882.4     6.53          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   89.672    0.02516    0.04994     17964.4     5.45          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   87.420    0.02528    0.07523     17652.4     6.21          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   85.227    0.02540    0.10063     17374.3     5.58          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   83.080    0.02552    0.12615     17101.6     5.53          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   80.978    0.02563    0.15178     16827.1     5.63          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   78.920    0.02574    0.17752     16530.6     5.51          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 132.2s (131.0s LP)
+  Final SoH: 78.92% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     39.56 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.05 MEUR
+    NPV (multi-year) :     54.70 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    106.61 MEUR
+    Bat rev yr1→yr20 : 18882 → 16531 kEUR  (-12.5%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    243.94 MEUR
+    NPV (multi-year) :     54.58 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    106.49 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3049.43 MEUR
+    NPV (multi-year) :   2860.08 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 212385 kEUR  (-1.1%)
+  ──────────────────────────────────────────────────────────
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+     1   92.049    0.02624    0.02624     18882.4     5.81          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   89.399    0.02671    0.05295     17942.7     6.37          
+Failed error check
+Error : 1.67e+02	8.88e-14
+Error : 0.00e+00	0.00e+00
+     3   87.019    0.02688    0.07983     17618.7     5.97          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   84.698    0.02704    0.10686     17324.6     5.91          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   82.425    0.02720    0.13406     17035.3     6.66          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   80.201    0.02735    0.16141     16735.1     6.21          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   78.027    0.02748    0.18889     16419.9     6.54          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   75.902    0.02762    0.21651     16107.7     5.99          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   73.824    0.02776    0.24426     15799.5     5.93          
+Failed error check
+Error : 4.92e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   71.789    0.02795    0.27222     15488.7     6.18          
+Failed error check
+Error : 4.83e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   69.802    0.02808    0.30029     15179.9     6.49       YES
+  *** Battery #1 replaced at end of year 11 ***
+Failed error check
+Error : 1.67e+02	1.37e-13
+Error : 0.00e+00	0.00e+00
+    12   92.049    0.02624    0.02624     18882.4     6.14          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   89.399    0.02671    0.05295     17942.7     5.94          
+Failed error check
+Error : 1.67e+02	8.88e-14
+Error : 0.00e+00	0.00e+00
+    14   87.019    0.02688    0.07983     17618.7     7.40          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   84.698    0.02704    0.10686     17324.6     8.06          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   82.425    0.02720    0.13406     17035.3     6.58          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   80.201    0.02735    0.16141     16735.1     6.50          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   78.027    0.02748    0.18889     16419.9     5.96          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   75.902    0.02762    0.21651     16107.7     6.08          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 121.3s (120.7s LP)
+  Final SoH: 75.90% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     40.74 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    243.94 MEUR
+    NPV (multi-year) :     53.40 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    105.78 MEUR
+    Bat rev yr1→yr20 : 18882 → 16108 kEUR  (-14.7%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    243.83 MEUR
+    NPV (multi-year) :     53.28 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    105.67 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3049.32 MEUR
+    NPV (multi-year) :   2858.78 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 211962 kEUR  (-1.3%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   54.7M  fd=0.02479  repl=1  SoH_end=78.9%  mean_dod=0.463  cyc<0.15=0.26 fd<0.15=0.0128 (xu 0.0187)  yr1Xu/Shi=1.14
+  [Xu ] NPV=   53.4M  fd=0.02624  repl=1  SoH_end=75.9%  full-model NPV Xu/Shi=0.976
+        t=253.5s
+
+[6/8] center | window 15-95% | center=0.55 width=0.80 | k4=1.179 R2=0.963
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.391    0.02353    0.02353     18882.4     6.80          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   89.905    0.02387    0.04741     17984.1     9.45          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   87.757    0.02399    0.07140     17681.1     6.16          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   85.666    0.02410    0.09549     17416.0     7.39          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   83.618    0.02420    0.11970     17156.4     8.04          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   81.610    0.02431    0.14400     16899.3     6.56          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   79.642    0.02440    0.16840     16620.3     8.38          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   77.715    0.02449    0.19290     16340.0     6.55          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   75.828    0.02459    0.21749     16062.7     7.57          
+Failed error check
+Error : 5.01e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   73.974    0.02476    0.24224     15788.6     7.16          
+Failed error check
+Error : 4.92e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   72.159    0.02484    0.26708     15511.2     6.88          
+Failed error check
+Error : 4.84e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   70.383    0.02492    0.29201     15236.2     7.16       YES
+  *** Battery #1 replaced at end of year 12 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   92.391    0.02353    0.02353     18882.4     7.61          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   89.905    0.02387    0.04741     17984.1     8.09          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   87.757    0.02399    0.07140     17681.1     6.18          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   85.666    0.02410    0.09549     17416.0     7.89          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   83.618    0.02420    0.11970     17156.4     8.20          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   81.610    0.02431    0.14400     16899.3     6.42          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   79.642    0.02440    0.16840     16620.3     8.06          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 141.9s (140.5s LP)
+  Final SoH: 79.64% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     39.56 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.99 MEUR
+    NPV (multi-year) :     55.63 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    107.32 MEUR
+    Bat rev yr1→yr20 : 18882 → 16620 kEUR  (-12.0%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    244.87 MEUR
+    NPV (multi-year) :     55.52 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    107.20 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3050.37 MEUR
+    NPV (multi-year) :   2861.01 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 212475 kEUR  (-1.1%)
+  ──────────────────────────────────────────────────────────
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.213    0.02491    0.02491     18882.4     7.03          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   89.643    0.02535    0.05026     17962.6     5.95          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   87.374    0.02550    0.07576     17648.9     5.95          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   85.162    0.02564    0.10140     17368.6     7.75          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   82.993    0.02579    0.12719     17093.4     6.59          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   80.869    0.02593    0.15312     16814.9     6.34          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   78.789    0.02605    0.17917     16515.2     6.00          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   76.754    0.02617    0.20534     16217.5     5.64          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   74.762    0.02630    0.23164     15923.3     7.86          
+Failed error check
+Error : 4.96e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   72.808    0.02649    0.25813     15629.5     6.57          
+Failed error check
+Error : 4.87e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   70.897    0.02660    0.28473     15334.8     6.14          
+Failed error check
+Error : 4.79e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   69.029    0.02670    0.31143     15043.7     6.84       YES
+  *** Battery #1 replaced at end of year 12 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   92.213    0.02491    0.02491     18882.4     7.50          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   89.643    0.02535    0.05026     17962.6     6.19          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   87.374    0.02550    0.07576     17648.9     6.96          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   85.162    0.02564    0.10140     17368.6     7.81          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   82.993    0.02579    0.12719     17093.4     6.84          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   80.869    0.02593    0.15312     16814.9     5.85          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   78.789    0.02605    0.17917     16515.2     8.75          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 129.1s (128.5s LP)
+  Final SoH: 78.79% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     39.56 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    243.89 MEUR
+    NPV (multi-year) :     54.53 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    106.54 MEUR
+    Bat rev yr1→yr20 : 18882 → 16515 kEUR  (-12.5%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    243.78 MEUR
+    NPV (multi-year) :     54.42 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    106.42 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3049.27 MEUR
+    NPV (multi-year) :   2859.91 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 212370 kEUR  (-1.1%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   55.6M  fd=0.02353  repl=1  SoH_end=79.6%  mean_dod=0.412  cyc<0.15=0.34 fd<0.15=0.0128 (xu 0.0187)  yr1Xu/Shi=1.14
+  [Xu ] NPV=   54.5M  fd=0.02491  repl=1  SoH_end=78.8%  full-model NPV Xu/Shi=0.980
+        t=271.0s
+
+[7/8] center | window 5-85% | center=0.45 width=0.80 | k4=1.179 R2=0.963
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.714    0.02121    0.02121     18882.4     6.40          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.342    0.02150    0.04271     18022.9     8.33          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.382    0.02160    0.06431     17734.9     7.46          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.483    0.02169    0.08600     17493.3     7.23          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   84.620    0.02178    0.10778     17258.1     6.06          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   82.791    0.02186    0.12964     17025.6     6.07          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   80.994    0.02194    0.15158     16786.4     5.66          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   79.230    0.02202    0.17360     16533.0     6.56          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   77.499    0.02209    0.19569     16280.9     6.13          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   75.800    0.02217    0.21786     16031.3     6.17          
+Failed error check
+Error : 5.00e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   74.127    0.02231    0.24017     15784.4     6.66          
+Failed error check
+Error : 4.93e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   72.486    0.02238    0.26255     15534.2     9.65          
+Failed error check
+Error : 4.86e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   70.877    0.02245    0.28500     15286.1     6.79          
+Failed error check
+Error : 4.79e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   69.299    0.02252    0.30752     15040.7     6.00       YES
+  *** Battery #1 replaced at end of year 14 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   92.714    0.02121    0.02121     18882.4     6.03          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   90.342    0.02150    0.04271     18022.9     5.98          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   88.382    0.02160    0.06431     17734.9     5.81          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   86.483    0.02169    0.08600     17493.3     6.95          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   84.620    0.02178    0.10778     17258.1     6.80          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 127.8s (126.7s LP)
+  Final SoH: 84.62% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     37.29 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.20 MEUR
+    NPV (multi-year) :     57.11 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    108.64 MEUR
+    Bat rev yr1→yr20 : 18882 → 17258 kEUR  (-8.6%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    244.08 MEUR
+    NPV (multi-year) :     56.99 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    108.52 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3049.58 MEUR
+    NPV (multi-year) :   2862.49 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 213113 kEUR  (-0.8%)
+  ──────────────────────────────────────────────────────────
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.537    0.02245    0.02245     18882.4     6.12          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.102    0.02283    0.04528     18001.7     5.86          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.035    0.02295    0.06823     17705.3     6.17          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.026    0.02307    0.09130     17450.5     5.54          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   84.054    0.02319    0.11449     17201.3     5.83          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   82.117    0.02331    0.13780     16954.3     5.92          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   80.217    0.02341    0.16122     16691.8     6.03          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   78.353    0.02351    0.18473     16422.1     5.93          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   76.525    0.02361    0.20834     16154.6     7.14          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   74.732    0.02371    0.23205     15890.0     9.97          
+Failed error check
+Error : 4.96e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   72.969    0.02387    0.25592     15625.0     8.86          
+Failed error check
+Error : 4.88e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   71.241    0.02396    0.27988     15359.3     7.16          
+Failed error check
+Error : 4.80e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   69.548    0.02405    0.30393     15096.3     7.32       YES
+  *** Battery #1 replaced at end of year 13 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   92.537    0.02245    0.02245     18882.4     7.12          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   90.102    0.02283    0.04528     18001.7     7.24          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   88.035    0.02295    0.06823     17705.3     6.84          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   86.026    0.02307    0.09130     17450.5     6.58          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   84.054    0.02319    0.11449     17201.3     6.59          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   82.117    0.02331    0.13780     16954.3     6.67          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 129.5s (128.9s LP)
+  Final SoH: 82.12% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     38.41 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.53 MEUR
+    NPV (multi-year) :     56.32 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    107.93 MEUR
+    Bat rev yr1→yr20 : 18882 → 16954 kEUR  (-10.2%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    244.41 MEUR
+    NPV (multi-year) :     56.21 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    107.82 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3049.91 MEUR
+    NPV (multi-year) :   2861.70 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 212809 kEUR  (-0.9%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   57.1M  fd=0.02121  repl=1  SoH_end=84.6%  mean_dod=0.391  cyc<0.15=0.37 fd<0.15=0.0128 (xu 0.0187)  yr1Xu/Shi=1.14
+  [Xu ] NPV=   56.3M  fd=0.02245  repl=1  SoH_end=82.1%  full-model NPV Xu/Shi=0.986
+        t=257.3s
+
+[8/8] center | window 0-80% | center=0.40 width=0.80 | k4=1.179 R2=0.963
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.875    0.02013    0.02013     18882.4     6.41          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.549    0.02040    0.04053     18042.3     6.72          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.674    0.02050    0.06103     17760.3     6.44          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.865    0.02057    0.08160     17529.3     6.80          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   85.089    0.02065    0.10225     17305.4     6.35          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   83.343    0.02073    0.12298     17084.3     6.53          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   81.627    0.02081    0.14379     16864.0     6.46          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   79.941    0.02087    0.16467     16622.7     6.69          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   78.284    0.02094    0.18561     16382.6     6.42          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   76.656    0.02101    0.20662     16144.7     6.43          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   75.057    0.02108    0.22770     15909.1     6.59          
+Failed error check
+Error : 4.97e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   73.482    0.02121    0.24891     15673.7     6.41          
+Failed error check
+Error : 4.90e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   71.936    0.02127    0.27018     15437.1     6.62          
+Failed error check
+Error : 4.83e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   70.418    0.02133    0.29150     15202.3     7.03       YES
+  *** Battery #1 replaced at end of year 14 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   92.875    0.02013    0.02013     18882.4     7.34          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   90.549    0.02040    0.04053     18042.3     7.22          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   88.674    0.02050    0.06103     17760.3     6.97          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   86.865    0.02057    0.08160     17529.3     6.93          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   85.089    0.02065    0.10225     17305.4     6.34          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 127.7s (126.7s LP)
+  Final SoH: 85.09% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     37.29 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    245.13 MEUR
+    NPV (multi-year) :     58.04 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    109.25 MEUR
+    Bat rev yr1→yr20 : 18882 → 17305 kEUR  (-8.4%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    245.01 MEUR
+    NPV (multi-year) :     57.93 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    109.14 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3050.51 MEUR
+    NPV (multi-year) :   2863.42 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 213160 kEUR  (-0.7%)
+  ──────────────────────────────────────────────────────────
+
+──────────────────────────────────────────────────────────────────────
+Multi-year loop: 20 yr | tile: 8760 h (365.0 d) | E_cap=550 MWh | P_cap=175 MW | SoH threshold: 70%
+──────────────────────────────────────────────────────────────────────
+  Year    SoH_%      fd_yr     fd_cum    rev_kEUR   t_lp_s  Replaced
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     1   92.699    0.02131    0.02131     18882.4     6.63          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     2   90.318    0.02166    0.04297     18021.1     6.33          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     3   88.343    0.02178    0.06475     17731.9     7.14          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     4   86.429    0.02188    0.08663     17488.6     6.20          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     5   84.549    0.02199    0.10862     17251.4     6.45          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     6   82.701    0.02210    0.13072     17016.7     6.42          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     7   80.886    0.02220    0.15291     16773.9     6.53          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     8   79.103    0.02228    0.17520     16517.6     6.50          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+     9   77.353    0.02237    0.19757     16262.6     6.43          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    10   75.635    0.02246    0.22003     16010.2     5.79          
+Failed error check
+Error : 5.00e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    11   73.943    0.02262    0.24265     15759.8     5.89          
+Failed error check
+Error : 4.92e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    12   72.284    0.02270    0.26535     15506.6     5.72          
+Failed error check
+Error : 4.85e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    13   70.656    0.02278    0.28813     15255.3     6.32          
+Failed error check
+Error : 4.78e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    14   69.060    0.02285    0.31098     15006.9     5.87       YES
+  *** Battery #1 replaced at end of year 14 ***
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    15   92.699    0.02131    0.02131     18882.4     5.92          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    16   90.318    0.02166    0.04297     18021.1     6.07          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    17   88.343    0.02178    0.06475     17731.9     5.88          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    18   86.429    0.02188    0.08663     17488.6     6.62          
+Failed error check
+Error : 1.67e+02	8.53e-14
+Error : 0.00e+00	0.00e+00
+    19   84.549    0.02199    0.10862     17251.4     6.21          
+──────────────────────────────────────────────────────────────────────
+  Loop time: 119.4s (118.9s LP)
+  Final SoH: 84.55% | Replacements: 1
+
+  ── NPV comparison (v5.3) ─────────────────────────────────
+  Wind-only baseline :    195854 kEUR/yr  (constant)
+  Battery capex      :    149.80 MEUR
+  PV(replacements)   :     37.29 MEUR
+
+  BATTERY-ONLY basis:
+    PV(bat. rev)     :    244.03 MEUR
+    NPV (multi-year) :     56.94 MEUR  ← corrected
+    NPV (no-deg)     :    120.67 MEUR
+    NPV (Plan B)     :    108.58 MEUR
+    Bat rev yr1→yr20 : 18882 → 17251 kEUR  (-8.6%)
+
+  ARBITRAGE basis (battery-as-asset; SHIPP a_npv):
+    PV(arb. rev)     :    243.92 MEUR
+    NPV (multi-year) :     56.83 MEUR
+    NPV (no-deg)     :    120.55 MEUR
+    NPV (Plan B)     :    108.47 MEUR
+
+  TOTAL PLANT basis (SHIPP-compatible):
+    PV(total rev)    :   3049.41 MEUR
+    NPV (multi-year) :   2862.32 MEUR
+    NPV (no-deg)     :   2926.05 MEUR
+    Total rev yr1→yr20: 214737 → 213106 kEUR  (-0.8%)
+  ──────────────────────────────────────────────────────────
+  [Shi] NPV=   58.0M  fd=0.02013  repl=1  SoH_end=85.1%  mean_dod=0.445  cyc<0.15=0.29 fd<0.15=0.0128 (xu 0.0187)  yr1Xu/Shi=1.14
+  [Xu ] NPV=   56.9M  fd=0.02131  repl=1  SoH_end=84.5%  full-model NPV Xu/Shi=0.981
+        t=247.1s
+
+----------------------------------------------------------------------
+DoD sweep complete: 7 windows in 1732s (28.9m)
+  ✓ CSV: v54_dodsweep_20260813_163037_E550_P175.csv
+  ✓ Config: v54_dodsweep_20260813_163037_E550_P175.json
+
+════════════════════════════════════════════════════════════════════════════════
+✓ v5.4 COMPLETE (DoD sweep)
+════════════════════════════════════════════════════════════════════════════════

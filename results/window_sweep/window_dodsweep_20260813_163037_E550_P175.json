@@ -1,0 +1,34 @@
+{
+  "version": "v5.4",
+  "sweep_kind": "dod",
+  "revenue_basis": "headline=marginal; arbitrage + marginal + total all reported",
+  "E_CAP_FIXED_MWh": 550.0,
+  "P_CAP_FIXED_MW": 175.0,
+  "width_series": {
+    "center": 0.5,
+    "widths": [
+      0.4,
+      0.6,
+      0.8,
+      1.0
+    ]
+  },
+  "center_series": {
+    "width": 0.8,
+    "centers": [
+      0.6,
+      0.55,
+      0.5,
+      0.45,
+      0.4
+    ]
+  },
+  "N_YEARS": 20,
+  "discount_rate": 0.03,
+  "eta_symmetric": 0.9539392307945773,
+  "round_trip_ac": 0.9100000560489498,
+  "e_cost_eur_kwh": 245.0,
+  "RUN_HOURS": 8760,
+  "EOL_REPLACEMENT": 0.7,
+  "LMO_NONCONVEX_DELTA": 0.1437
+}

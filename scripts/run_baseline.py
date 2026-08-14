@@ -44,6 +44,7 @@ from shipp.kernel import solve_lp_sparse
 from shipp.kernel_pyomo import solve_lp_pyomo
 from shipp.components import Storage, Production, TimeSeries
 
+from pathlib import Path
 from degradation.site import quick_setup, get_wake_model
 
 # Xu — reporting baseline + calendar correction helpers
@@ -144,8 +145,7 @@ MAKE_PLOT            = True
 show_plots           = False
 
 run_ts  = datetime.now().strftime('%Y%m%d_%H%M%S')
-FILE_TAG = "v56_rtetest"   # RTE sensitivity variant; rte value appended per run in _build_run_label
-
+FILE_TAG = "baseline"   # rte value appended per run in _build_run_label
 
 def _build_run_label(
     ts: str, price_csv: Path, p_cap: float, e_cap: float,

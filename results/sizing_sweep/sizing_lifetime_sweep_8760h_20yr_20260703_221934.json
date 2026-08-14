@@ -1,0 +1,39 @@
+{
+  "E_CAP_GRID": [
+    150,
+    300,
+    450,
+    600,
+    700,
+    800,
+    900,
+    1000,
+    1100,
+    1300,
+    1500
+  ],
+  "P_CAP_GRID": [
+    75,
+    125,
+    175,
+    200,
+    225,
+    250,
+    275,
+    325
+  ],
+  "INCLUDE_CALENDAR": true,
+  "RUN_HOURS": 8760,
+  "N_YEARS": 20,
+  "REPL_THRESHOLD": 0.7,
+  "DISCOUNT_RATE": 0.03,
+  "LIFETIME_NPV_FLOOR": 0.65,
+  "LIFETIME_MIN_DURATION_H": 1.0,
+  "LIFETIME_MAX_DURATION_H": 8.0,
+  "soc_min": 0.1,
+  "soc_max": 0.9,
+  "eta_out": 0.9539392307945773,
+  "e_cost_eur_kwh": 245.0,
+  "k3": 3.241779477729208e-05,
+  "k4": 1.178528617001297
+}
