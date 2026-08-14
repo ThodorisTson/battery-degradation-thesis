@@ -22,7 +22,7 @@ TESTS
   T1.0  reference counter reproduces the ASTM E1049 worked example
   T1.1  constant-amplitude trace: record structure, depths, means, total count
   T1.2  nested small cycles on a large excursion: the small cycles are resolved
-  T1.3  degradation_xu and degradation_shi counters agree exactly
+  T1.3  degradation.xu and degradation.shi counters agree exactly
   T1.4  Xu cycle and calendar terms against closed form
   T1.5  calendar isolated on a flat trace: rate, mean-SoC factor, duration
   T1.6  linearity: tripling the number of cycles triples the cycle term
@@ -34,14 +34,14 @@ OUTPUT
   console table of expected vs obtained
   Verification/tier1_verification.csv
   Verification/tier1_verification_table.tex   (ready to \input in Chapter 4)
-  Verification/fig_verify_rainflow_readback.pdf / .png
+  fig_verify_rainflow_readback.pdf / .png, written beside this script
 
 Reproducible on Windows / VS Code: numpy, pandas, matplotlib, rainflow.
-Place next to degradation_xu.py and degradation_shi.py and run it.
+Run from anywhere in the repository; imports resolve through the degradation
+package. Produces Figure D.1.
 """
 from __future__ import annotations
 
-import sys
 from collections import deque
 from pathlib import Path
 
@@ -49,37 +49,33 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# --- locate thesis_style.py (lives in this folder or a parent) ---------------
-HERE = Path(__file__).resolve().parent
-for _d in [HERE, *HERE.parents]:
-    if (_d / "thesis_style.py").exists():
-        sys.path.insert(0, str(_d))
-        break
-else:
-    raise FileNotFoundError("thesis_style.py not found next to this script.")
-sys.path.insert(0, str(HERE))
+from degradation.style import apply_thesis_style, figsize, TUDELFT, FS_ANNOT, FS_LEGEND
 
-from thesis_style import apply_thesis_style, figsize, TUDELFT, FS_ANNOT, FS_LEGEND
+HERE = Path(__file__).resolve().parent
+
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "both"     # "png", "pdf" or "both"
+DPI = 300
 
 # --- code under test ---------------------------------------------------------
-from degradation_xu import (
+from degradation.xu import (
     rainflow_cycle_counting as rainflow_xu,
     compute_fd,
     XU_LMO,
 )
-from degradation_shi import (
+from degradation.shi import (
     rainflow_cycle_counting as rainflow_shi,
     fit_shi_polynomial,
     compute_fd_shi,
     ShiModelParams,
 )
 
-OUT_DIR = HERE / "Verification"
+OUT_DIR = HERE
 
 # =============================================================================
 # 1.  Reference constants and stress factors, written out independently
 #     Source: Xu et al. (2016), Table I, LMO. Do not import these from
-#     degradation_xu -- that is the point of the exercise.
+#     degradation.xu -- that is the point of the exercise.
 # =============================================================================
 K_DELTA1, K_DELTA2, K_DELTA3 = 1.40e5, -5.01e-1, -1.23e5   # Eq. 32
 K_SIGMA, SIGMA_REF           = 1.04, 0.50                  # Eq. 25
@@ -418,7 +414,7 @@ def test_shi_surrogate(n_periods: int = 10) -> None:
     fit = fit_shi_polynomial(soc_min=SOC_MIN, soc_max=SOC_MAX, verbose=False)
     p = ShiModelParams.from_fit(fit)
 
-    # stored constants from WP2_Battery.yaml runs, reproduced by the refit
+    # stored constants from config/battery.yaml runs, reproduced by the refit
     check("T1.7", "k3 from refit", 3.241779477729208e-05, fit.k3, "-", rtol=1e-9)
     check("T1.7", "k4 from refit", 1.178528617001297, fit.k4, "-", rtol=1e-9)
     check("T1.7", "convexity margin k4 - 1", 0.178528617001297, fit.k4 - 1.0,
@@ -492,8 +488,10 @@ def make_figure(cyc_tri, cyc_nested, out_dir: Path) -> None:
     ], frameon=False, fontsize=FS_LEGEND, loc="upper left", ncol=1)
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_dir / "fig_verify_rainflow_readback.pdf")
-    fig.savefig(out_dir / "fig_verify_rainflow_readback.png", dpi=300)
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / "fig_verify_rainflow_readback.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / "fig_verify_rainflow_readback.png", dpi=DPI)
     plt.close(fig)
 
 
@@ -539,6 +537,11 @@ def report(out_dir: Path) -> pd.DataFrame:
     if n_fail:
         raise SystemExit(f"{n_fail} verification check(s) failed.")
     return df
+
+
+def _check_output() -> None:
+    if OUTPUT not in ("png", "pdf", "both"):
+        raise ValueError(f'OUTPUT must be "png", "pdf" or "both", not {OUTPUT!r}')
 
 
 def main() -> None:

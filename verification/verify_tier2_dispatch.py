@@ -37,7 +37,7 @@ WHY IT CALLS THE RUN SCRIPT
 The LP is invoked through _solve_shipp() imported from the production run script, so the code path exercised here is the one that produced Chapter 4.
 Reimplementing the solver call would verify a copy instead. The run script is import-safe: everything heavy sits inside main().
 
-Battery parameters are read from WP2_Battery.yaml independently of the run script's own builder, so that the efficiency the LP honours is compared against
+Battery parameters are read from config/battery.yaml independently of the run script's own builder, so that the efficiency the LP honours is compared against
 the efficiency the configuration declares.
 
 OUTPUT
@@ -45,14 +45,14 @@ OUTPUT
   console table of expected vs obtained
   Verification/tier2_verification.csv
   Verification/tier2_verification_table.tex
-  Verification/fig_verify_dispatch_week.pdf / .png
-  Verification/fig_verify_rte_threshold.pdf / .png
+  fig_verify_dispatch_week.pdf / .png    (not a thesis figure)
+  fig_verify_rte_threshold.pdf / .png    (Figure D.2)
+  both written beside this script
 
 Reproducible on Windows / VS Code. Needs pyomo + gurobi, as the SoC window is only enforced in the Pyomo branch of the kernel.
 """
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -60,20 +60,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import yaml
 
+from degradation.paths import BATTERY_YAML, require
+from degradation.style import apply_thesis_style, figsize, TUDELFT, FS_ANNOT, FS_LEGEND
+from degradation.xu import rainflow_cycle_counting
+
 HERE = Path(__file__).resolve().parent
-for _d in [HERE, *HERE.parents]:
-    if (_d / "thesis_style.py").exists():
-        sys.path.insert(0, str(_d))
-        break
-else:
-    raise FileNotFoundError("thesis_style.py not found next to this script.")
-sys.path.insert(0, str(HERE))
 
-from thesis_style import apply_thesis_style, figsize, TUDELFT, FS_ANNOT, FS_LEGEND
-from degradation_xu import rainflow_cycle_counting
+# -- Output ------------------------------------------------------------------ #
+OUTPUT = "both"     # "png", "pdf" or "both"
+DPI = 300
 
-OUT_DIR      = HERE / "Verification"
-BATTERY_YAML = HERE / "WP2_Battery.yaml"
+OUT_DIR = HERE
+BATTERY_YAML = require(BATTERY_YAML)
 
 # =============================================================================
 # 1.  Case configuration
@@ -145,17 +143,32 @@ def constant_wind(n: int) -> np.ndarray:
 # 3.  Solving through the production code path
 # =============================================================================
 def _import_run_module():
-    """Import the run script for _solve_shipp. Everything heavy is in main()."""
+    """Import the run script for _solve_shipp.
+
+    The check exists to verify the production solver call rather than a copy of
+    it, so the run script is imported rather than reimplemented. It is
+    import-safe: everything heavy sits inside main().
+    """
     import importlib
-    for name in ("run_battery_xu_shi_degradation_v5_6_RTE_test",
-                 "run_battery_xu_shi_degradation_v5_4___Xu_comp_short_"):
-        try:
-            return importlib.import_module(name)
-        except ImportError:
-            continue
-    raise ImportError(
-        "Could not import the run script. Place this file in the same folder "
-        "as run_battery_xu_shi_degradation_v5_6_RTE_test.py.")
+    try:
+        return importlib.import_module("scripts.run_baseline")
+    except ImportError:
+        pass
+    # Fall back to a direct file load, for the case where scripts/ is not a
+    # package on sys.path.
+    import importlib.util
+    import sys
+    from degradation.paths import REPO_ROOT
+    path = REPO_ROOT / "scripts" / "run_baseline.py"
+    if not path.exists():
+        raise ImportError(f"could not find {path}")
+    spec = importlib.util.spec_from_file_location("run_baseline", path)
+    mod = importlib.util.module_from_spec(spec)
+    # Register before executing. run_baseline.py uses postponed annotations, and dataclasses resolves them through sys.modules[cls.__module__]; without
+    # this the first @dataclass in the module raises AttributeError on None.
+    sys.modules[spec.name] = mod
+    spec.loader.exec_module(mod)
+    return mod
 
 
 def solve_case(price: np.ndarray, bat: dict, label: str) -> dict:
@@ -437,8 +450,10 @@ def figure_week(sol: dict, out_dir: Path) -> None:
                va="bottom", fontsize=FS_ANNOT, color=TUDELFT["blue"])
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_dir / "fig_verify_dispatch_week.pdf")
-    fig.savefig(out_dir / "fig_verify_dispatch_week.png", dpi=300)
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / "fig_verify_dispatch_week.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / "fig_verify_dispatch_week.png", dpi=DPI)
     plt.close(fig)
 
 
@@ -479,8 +494,10 @@ def figure_threshold(res: dict, out_dir: Path) -> None:
                  color=TUDELFT["darkred"], ha="left", va="center")
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_dir / "fig_verify_rte_threshold.pdf")
-    fig.savefig(out_dir / "fig_verify_rte_threshold.png", dpi=300)
+    if OUTPUT in ("pdf", "both"):
+        fig.savefig(out_dir / "fig_verify_rte_threshold.pdf")
+    if OUTPUT in ("png", "both"):
+        fig.savefig(out_dir / "fig_verify_rte_threshold.png", dpi=DPI)
     plt.close(fig)
 
 

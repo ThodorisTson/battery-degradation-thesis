@@ -1,0 +1,49 @@
+test,quantity,unit,expected,obtained,rel_error,rtol,status,note
+T1.0,count at range 3,cycles,0.5,0.5,0.0,1e-12,PASS,
+T1.0,count at range 4,cycles,1.5,1.5,0.0,1e-12,PASS,
+T1.0,count at range 6,cycles,0.5,0.5,0.0,1e-12,PASS,
+T1.0,count at range 8,cycles,1.0,1.0,0.0,1e-12,PASS,
+T1.0,count at range 9,cycles,0.5,0.5,0.0,1e-12,PASS,
+T1.0,number of distinct ranges,-,5.0,5.0,0.0,1e-12,PASS,
+T1.1,rainflow records,records,20.0,20.0,0.0,1e-12,PASS,
+T1.1,total cycle count,cycles,10.0,10.0,0.0,1e-12,PASS,
+T1.1,cycle depth (all records),-,0.8,0.8,0.0,1e-12,PASS,
+T1.1,cycle depth spread,-,0.0,0.0,0.0,1e-12,PASS,
+T1.1,cycle mean SoC (all records),-,0.5,0.5,0.0,1e-12,PASS,
+T1.1,record count of every entry,cycles,0.5,0.5,0.0,1e-12,PASS,
+T1.1,records matching independent counter,records,20.0,20.0,0.0,1e-12,PASS,independent ASTM implementation
+T1.2,full cycles resolved,cycles,4.0,4.0,0.0,1e-12,PASS,
+T1.2,half cycles (large excursion),records,2.0,2.0,0.0,1e-12,PASS,
+T1.2,total cycle count,cycles,5.0,5.0,0.0,1e-12,PASS,
+T1.2,small cycle 1 depth,-,0.1,0.1,0.0,1e-12,PASS,
+T1.2,small cycle 1 mean SoC,-,0.25,0.25,0.0,1e-12,PASS,
+T1.2,small cycle 2 depth,-,0.1,0.1,0.0,1e-12,PASS,
+T1.2,small cycle 2 mean SoC,-,0.35,0.35,0.0,1e-12,PASS,
+T1.2,small cycle 3 depth,-,0.1,0.1,0.0,1e-12,PASS,
+T1.2,small cycle 3 mean SoC,-,0.45,0.45,0.0,1e-12,PASS,
+T1.2,small cycle 4 depth,-,0.1,0.1,0.0,1e-12,PASS,
+T1.2,small cycle 4 mean SoC,-,0.55,0.55,0.0,1e-12,PASS,
+T1.2,large excursion depth,-,0.8,0.8,0.0,1e-12,PASS,
+T1.2,large excursion mean SoC,-,0.5,0.5,0.0,1e-12,PASS,
+T1.2,records invariant to ramp sampling,records,6.0,6.0,0.0,1e-12,PASS,turning points only vs interpolated
+T1.3,"identical records, constant amplitude",records,20.0,20.0,0.0,1e-12,PASS,degradation_xu vs degradation_shi
+T1.3,"identical records, nested",records,6.0,6.0,0.0,1e-12,PASS,degradation_xu vs degradation_shi
+T1.4,S_delta(0.80),-,2.9797653244e-05,2.9797653243586807e-05,1.3866623410996787e-11,1e-09,PASS,"literal, checked by hand"
+T1.4,f_d cycle term,-,0.00029797653243586805,0.0002979765324358681,1.819274430141326e-16,1e-12,PASS,
+T1.4,f_d calendar term,-,0.00017971945817576646,0.00017971945817576646,0.0,1e-12,PASS,
+T1.4,f_d total,-,0.0004776959906116345,0.0004776959906116346,2.269648885051995e-16,1e-12,PASS,
+T1.4,S_T at 25 C,-,1.0,1.0,0.0,1e-12,PASS,
+T1.5,cycle term at sigma=0.50,-,0.0,3.5254816240753504e-09,3.5254816240753504e-09,1e-12,PASS,"flat trace, no reversals"
+T1.5,calendar term at sigma=0.50,-,0.001073088,0.001073088,0.0,1e-12,PASS,
+T1.5,cycle term at sigma=0.70,-,0.0,4.340619404564102e-09,4.340619404564102e-09,1e-12,PASS,"flat trace, no reversals"
+T1.5,calendar term at sigma=0.70,-,0.0013212000776848553,0.0013212000776848553,0.0,1e-12,PASS,
+T1.5,calendar ratio sigma 0.70 / 0.50,-,1.2312131695488677,1.2312131695488677,0.0,1e-12,PASS,
+T1.5,calendar ratio 1440 h / 720 h,-,2.0,2.0,0.0,1e-12,PASS,
+T1.6,f_cyc ratio 30 / 10 periods,-,3.0,3.000000000000003,1.0362081563168128e-15,1e-12,PASS,"identical cycles, so the sum is linear in their number"
+T1.7,k3 from refit,-,3.241779477729208e-05,3.241779477729208e-05,0.0,1e-09,PASS,
+T1.7,k4 from refit,-,1.178528617001297,1.178528617001297,0.0,1e-09,PASS,
+T1.7,convexity margin k4 - 1,-,0.178528617001297,0.17852861700129696,1.5546849620992287e-16,1e-09,PASS,k4 > 1 required by Shi Theorem 1
+T1.7,S_sigma at the window centre,-,1.0,1.0,0.0,1e-12,PASS,10-90% window puts sigma_bar at sigma_ref exactly
+T1.7,"f_d Shi, cycle only",-,0.0002492138904737364,0.0002492138904737364,0.0,1e-12,PASS,
+T1.7,Phi_shi / S_delta at delta=0.80,-,0.836354092,0.8363540861305022,7.01795786359401e-09,1e-08,PASS,"inside fit range [0.15, 0.80]"
+T1.7,Phi_shi / S_delta at delta=0.10,-,0.6892983344,0.6892983275192897,9.982194924092936e-09,1e-08,PASS,"BELOW fit range, extrapolation"

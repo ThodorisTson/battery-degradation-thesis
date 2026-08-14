@@ -1,0 +1,33 @@
+test,quantity,unit,expected,obtained,rel_error,rtol,status,note
+T2.1,min SoC level,MWh,30.0,29.999999999999975,8.289665250534502e-16,1e-09,PASS,lower window bound
+T2.1,max SoC level,MWh,270.0,270.00000000000006,2.1053118096595562e-16,1e-09,PASS,upper window bound
+T2.1,SoC at the last returned step,MWh,,29.999999999999993,,,INFO,e[n] equals e[0] by the kernel's periodic constraint
+T2.1,peak power magnitude,MW,150.0,150.0,0.0,1e-09,PASS,
+T2.1,steps outside the power limit,steps,0.0,0.0,0.0,1e-09,PASS,
+T2.1,weighted mean charge price,EUR/MWh,40.825524507914636,40.825524507914636,0.0,1e-08,PASS,cheapest hours in merit order
+T2.1,weighted mean discharge price,EUR/MWh,159.29502852203078,159.29502852203078,0.0,1e-08,PASS,most expensive hours in merit order
+T2.1,discharge / charge price ratio,-,,3.9018489154046034,,,INFO,must exceed 1/RTE = 1.0989
+T2.1,energy discharged over the week,MWh,1602.61790773489,1602.6179077348902,1.4187641005746512e-16,1e-06,PASS,
+T2.1,energy drawn to charge over the week,MWh,1761.1184714571966,1761.1184714571968,1.2910754110431708e-16,1e-06,PASS,
+T2.1,deep cycle count,cycles,7.0,7.0,0.0,1e-09,PASS,one full cycle per price period
+T2.1,deep cycle depth,-,0.8,0.8000000000000003,2.7755575615628914e-16,1e-09,PASS,
+T2.1,deep cycle mean SoC,-,0.5,0.5,0.0,1e-09,PASS,
+T2.1,shallow rainflow records (delta <= 0.5),records,,0.0,,,INFO,zero on an exact trace; non-zero indicates LP degeneracy
+T2.2,steps violating the SoC inequality,steps,0.0,0.0,0.0,1e-09,PASS,kernel imposes the balance as two upper bounds
+T2.2,largest violation,MWh,0.0,5.684341886080802e-14,5.684341886080802e-14,1e-09,PASS,
+T2.2,steps with slack in the SoC balance,steps,,0.0,,,INFO,out of 168; these seed phantom micro-cycles
+T2.2,energy discarded over the horizon,MWh,,0.0,,,INFO,
+T2.2,idle steps strictly inside the window,steps,,0.0,,,INFO,population in which free SoC drift is possible
+T2.2,discarded energy as a share of energy drawn,-,0.0,0.0,0.0,1e-09,PASS,"must be negligible, need not be exactly zero"
+T2.2,delivered / drawn energy,-,0.9100000560489498,0.91000005604895,1.2200252266417845e-16,1e-06,PASS,closes the round trip through the LP
+T2.3,discharge at price ratio 1.020,MWh,0.0,0.0,0.0,1e-09,PASS,"below the threshold, arbitrage loses money"
+T2.3,discharge at price ratio 1.050,MWh,0.0,0.0,0.0,1e-09,PASS,"below the threshold, arbitrage loses money"
+T2.3,discharge at price ratio 1.080,MWh,0.0,0.0,0.0,1e-09,PASS,"below the threshold, arbitrage loses money"
+T2.3,discharge at price ratio 1.130,MWh,686.8362461720957,686.8362461720958,1.6552247840037598e-16,1e-06,PASS,"above the threshold, window saturates"
+T2.3,discharge at price ratio 1.160,MWh,686.8362461720957,686.8362461720958,1.6552247840037598e-16,1e-06,PASS,"above the threshold, window saturates"
+T2.3,discharge at price ratio 1.200,MWh,686.8362461720957,686.8362461720958,1.6552247840037598e-16,1e-06,PASS,"above the threshold, window saturates"
+T2.3,discharge at price ratio 1.300,MWh,686.8362461720957,686.8362461720958,1.6552247840037598e-16,1e-06,PASS,"above the threshold, window saturates"
+T2.3,ratios excluded as near-degenerate,-,,0.0,,,INFO,within 0.0% of the threshold
+T2.3,threshold lies above the last idle ratio,-,1.0,1.0,0.0,1e-09,PASS,last idle ratio 1.0975
+T2.3,threshold lies at or below the first active ratio,-,1.0,1.0,0.0,1e-09,PASS,first active ratio 1.0995
+T2.3,predicted threshold 1/RTE,-,1.0989010312,1.098901031217309,1.5751230180227866e-11,1e-09,PASS,from the YAML efficiencies

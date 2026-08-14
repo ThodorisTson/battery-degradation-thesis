@@ -2,17 +2,13 @@
 verify_week_audit.py
 ====================
 
-Independent audit of the week-snapshot verification outputs, and generator of
-the two LaTeX tables used in Section 4.2 of the thesis.
+Independent audit of the week-snapshot verification outputs, and generator of the two LaTeX tables used in Section 4.2 of the thesis.
 
-This script does NOT solve anything. It reads the CSV files written by
-`verify_week_snapshot.py` and recomputes, from those published numbers alone,
-every quantity Section 4.2 asserts. The point is traceability: a reader who has
-the CSV files can run this and reproduce the reported degradation without
+This script does NOT solve anything. It reads the CSV files written by `verify_week_snapshot.py` and recomputes, from those published numbers alone,
+every quantity Section 4.2 asserts. The point is traceability: a reader who has the CSV files can run this and reproduce the reported degradation without
 access to the solver, the wind data or the price data.
 
-Inputs (expected in the same folder as this script, or in a subfolder given by
---indir):
+Inputs (expected in the same folder as this script, or in a subfolder given by --indir):
 
     week_snapshot_summary.csv
     week_snapshot_cycles.csv
@@ -34,6 +30,7 @@ Exit code is 0 if every check passes and 1 otherwise.
 """
 
 from __future__ import annotations
+from degradation.paths import RESULTS_DIR
 
 import argparse
 import sys
@@ -43,8 +40,7 @@ import numpy as np
 import pandas as pd
 
 # ----------------------------------------------------------------------
-# Constants. These are written out here on purpose, independently of the
-# degradation modules, so that a wrong coefficient in the model shows up as a
+# Constants. These are written out here on purpose, independently of the degradation modules, so that a wrong coefficient in the model shows up as a
 # disagreement instead of cancelling on both sides of the comparison.
 # ----------------------------------------------------------------------
 E_NOM_MWH = 300.0                    # nominal energy capacity
@@ -55,8 +51,7 @@ SIGMA_REF = 0.50                     # Xu mean-SoC reference
 K_T = 4.14e-10                       # Xu calendar rate, per second
 DT_H = 1.0                           # dispatch time step, hours
 
-# Bump this whenever the emitted LaTeX changes, so the console shows at a
-# glance which version produced the tables now sitting in the thesis.
+# Bump this whenever the emitted LaTeX changes, so the console shows at a glance which version produced the tables now sitting in the thesis.
 SCRIPT_VERSION = "2026-07-29c  notation aligned: k_tau, p_t^s, Pbar, eta_in"
 DELTA_C = 0.1437                     # inflection point of Xu S_delta
 WEEK_HOURS = 168
@@ -128,7 +123,7 @@ def resolve_indir(user_indir: str | None) -> Path:
     if user_indir:
         candidates.append(Path(user_indir) if Path(user_indir).is_absolute()
                           else here / user_indir)
-    candidates += [here, here / "Results" / "Week Snapshot"]
+    candidates += [here, RESULTS_DIR / "week_snapshot"]
     for c in candidates:
         if (c / "week_snapshot_summary.csv").is_file():
             return c
@@ -286,8 +281,7 @@ def check_annual_record_split(summary, indir, audit):
 
 def check_centre_invariance(summary, hourly, audit):
     """
-    Shifting the window centre at fixed width must leave the power schedule
-    unchanged and offset the state of charge by exactly the shift. Degradation
+    Shifting the window centre at fixed width must leave the power schedule unchanged and offset the state of charge by exactly the shift. Degradation
     must then scale by exp(k_sigma * shift).
     """
     ref = "10-90"
@@ -336,8 +330,7 @@ def check_centre_invariance(summary, hourly, audit):
 
 def check_efc(summary, hourly, audit):
     """
-    Equivalent full cycles as the run defines them: discharge throughput at the
-    AC terminal divided by nominal capacity, EFC = sum(p[p>0]) * dt / E_nom.
+    Equivalent full cycles as the run defines them: discharge throughput at the AC terminal divided by nominal capacity, EFC = sum(p[p>0]) * dt / E_nom.
     """
     worst = 0.0
     for _, row in summary.iterrows():
@@ -356,8 +349,7 @@ def check_efc(summary, hourly, audit):
 
 def check_rated_hour_positioning(hourly, audit):
     """
-    Ahead of the largest price peak of the week the model rests exactly one
-    rated charging hour below the window ceiling, in every width-series window.
+    Ahead of the largest price peak of the week the model rests exactly one rated charging hour below the window ceiling, in every width-series window.
     This is a closed form: P_rated * 1 h * eta / E_nom.
     """
     rise = P_RATED_MW * 1.0 * ETA_ONEWAY / E_NOM_MWH
@@ -379,8 +371,7 @@ def check_rated_hour_positioning(hourly, audit):
 
 def report_shared_events(cycles):
     """
-    List the intermediate-depth records whose depth is identical in all three
-    width-series windows, and those that are not. Used to support the text.
+    List the intermediate-depth records whose depth is identical in all three width-series windows, and those that are not. Used to support the text.
     """
     per_win = {}
     for win in WIDTH_SERIES:
@@ -432,8 +423,7 @@ def tex_sci(x, sig=1) -> str:
 
 
 def latex_checks_body(worst) -> str:
-    """One row per check. Column 2 names the independent reference the check
-    is compared against, as a closed form where one exists. This keeps the
+    """One row per check. Column 2 names the independent reference the check is compared against, as a closed form where one exists. This keeps the
     table inside \\textwidth; the earlier prose column overflowed it."""
     rows = [
         ("Provenance", "Stored baseline run", "$0$"),

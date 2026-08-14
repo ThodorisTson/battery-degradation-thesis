@@ -92,17 +92,17 @@ from degradation.economics import (
 )
 
 # Single source of truth for every path in the repository
-from degradation.paths import HPP_YAML, PRICE_CSV_2019, results_dir
+from degradation.paths import HPP_YAML, PRICE_CSV_2019, PRICE_CSV_2022, results_dir
 
 # =============================================================================
 # CONFIG
 # =============================================================================
 
-PRICE_CSV = PRICE_CSV_2019          # switch to PRICE_CSV_2022 for the 2022 price year
+PRICE_CSV = PRICE_CSV_2022          # switch to PRICE_CSV_2022 for the 2022 price year
 
 # Degradation model: "shi" (fitted Phi + Xu calendar, fast) or "xu" (full Xu, about twice the runtime). Declared here because the output folder is keyed
 # on it: a Shi run and an Xu run of the same case produce files with identical names, so they must not share a directory.
-DEG_MODEL = "xu"
+DEG_MODEL = "shi"
 
 BRANCH_DIR_NAME = {"shi": "shi", "xu": "xu"}
 if DEG_MODEL not in BRANCH_DIR_NAME:

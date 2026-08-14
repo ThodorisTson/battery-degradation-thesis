@@ -1,0 +1,69 @@
+==============================================================================
+WEEK SNAPSHOT AUDIT
+input folder: C:\Users\User\Desktop\Thesis\battery-degradation-thesis\results\week_snapshot
+windows: 10-90, 20-80, 0-100, 20-100, 0-80
+week: 20, 168 hourly steps
+script version: 2026-07-29c  notation aligned: k_tau, p_t^s, Pbar, eta_in
+==============================================================================
+  [PASS] cycle term from cycle list, 10-90               recomputed 2.782760e-04  reported 2.782760e-04  rel 2.7e-13
+  [PASS] calendar term closed form, 10-90                recomputed 2.415594e-04  reported 2.415594e-04  rel 4.0e-13
+  [PASS] cycle term from cycle list, 20-80               recomputed 1.772099e-04  reported 1.772099e-04  rel 3.9e-13
+  [PASS] calendar term closed form, 20-80                recomputed 2.436763e-04  reported 2.436763e-04  rel 4.1e-14
+  [PASS] cycle term from cycle list, 0-100               recomputed 4.906389e-04  reported 4.906389e-04  rel 1.3e-13
+  [PASS] calendar term closed form, 0-100                recomputed 2.380981e-04  reported 2.380981e-04  rel 3.7e-13
+  [PASS] cycle term from cycle list, 20-100              recomputed 3.087759e-04  reported 3.087759e-04  rel 2.6e-13
+  [PASS] calendar term closed form, 20-100               recomputed 2.680344e-04  reported 2.680344e-04  rel 2.7e-13
+  [PASS] cycle term from cycle list, 0-80                recomputed 2.507793e-04  reported 2.507793e-04  rel 2.7e-13
+  [PASS] calendar term closed form, 0-80                 recomputed 2.176994e-04  reported 2.176994e-04  rel 4.0e-13
+  [PASS] SoC inside window, 10-90                        max violation +6.661e-14 MWh of 300 MWh
+  [PASS] power within rating, 10-90                      max |P| 150.0000000000 MW, overrun +0.00e+00 MW
+  [PASS] SoC inside window, 20-80                        max violation +9.992e-14 MWh of 300 MWh
+  [PASS] power within rating, 20-80                      max |P| 150.0000000000 MW, overrun +0.00e+00 MW
+  [PASS] SoC inside window, 0-100                        max violation +0.000e+00 MWh of 300 MWh
+  [PASS] power within rating, 0-100                      max |P| 150.0000000000 MW, overrun +0.00e+00 MW
+  [PASS] SoC inside window, 20-100                       max violation +6.661e-14 MWh of 300 MWh
+  [PASS] power within rating, 20-100                     max |P| 150.0000000000 MW, overrun +0.00e+00 MW
+  [PASS] SoC inside window, 0-80                         max violation +9.992e-14 MWh of 300 MWh
+  [PASS] power within rating, 0-80                       max |P| 150.0000000000 MW, overrun +0.00e+00 MW
+  [PASS] record bookkeeping, 10-90                       19 records = 12 full + 7 half, count 15.5, 16 above delta_c, 3 straddling
+  [PASS] record bookkeeping, 20-80                       20 records = 11 full + 9 half, count 15.5, 17 above delta_c, 3 straddling
+  [PASS] record bookkeeping, 0-100                       19 records = 6 full + 13 half, count 12.5, 18 above delta_c, 2 straddling
+  [PASS] record bookkeeping, 20-100                      24 records = 7 full + 17 half, count 15.5, 21 above delta_c, 3 straddling
+  [PASS] record bookkeeping, 0-80                        17 records = 10 full + 7 half, count 13.5, 16 above delta_c, 3 straddling
+  [PASS] annual record split, 10-90                      980 records = 573 full + 407 half (0 other), summed multiplicity 776.5, identities 2S-R = 573, 2(R-S) = 407
+  [PASS] equivalent full cycles, 10-90                   recomputed 7.858755909  reported 7.858755909  rel 0.0e+00
+  [PASS] equivalent full cycles, 20-80                   recomputed 6.332453140  reported 6.332453140  rel 0.0e+00
+  [PASS] equivalent full cycles, 0-100                   recomputed 9.274226641  reported 9.274226641  rel 0.0e+00
+  [PASS] equivalent full cycles, 20-100                  recomputed 7.858755909  reported 7.858755909  rel 0.0e+00
+  [PASS] equivalent full cycles, 0-80                    recomputed 7.858755909  reported 7.858755909  rel 0.0e+00
+  [PASS] center invariance, dispatch, 0-80               max |dP| 1.492e-13 MW over 168 steps
+  [PASS] center invariance, SoC offset, 0-80             offset -0.10 held to 5.829e-16
+  [PASS] degradation ratio vs exp(k_sigma dSoC), 0-80    observed 0.901206  predicted 0.901225  rel 2.1e-05
+  [PASS] center invariance, dispatch, 20-100             max |dP| 2.984e-13 MW over 168 steps
+  [PASS] center invariance, SoC offset, 20-100           offset +0.10 held to 8.604e-16
+  [PASS] degradation ratio vs exp(k_sigma dSoC), 20-100  observed 1.109602  predicted 1.109600  rel 1.3e-06
+  [PASS] pre-peak resting level, 20-80                   h99 SoC 0.323030  ceiling - 0.476970 = 0.323030  err 1.1e-16
+  [PASS] pre-peak resting level, 10-90                   h99 SoC 0.423030  ceiling - 0.476970 = 0.423030  err 5.6e-17
+  [PASS] pre-peak resting level, 0-100                   h99 SoC 0.523030  ceiling - 0.476970 = 0.523030  err 0.0e+00
+
+SUPPORTING DETAIL
+  EFC definition: sum(p[p>0])*dt / E_nom, reproduced to 0.0e+00
+  one rated charging hour = 0.476970 of nominal capacity
+  depths present in all three width-series windows:
+    delta = 0.2301   start hour {'20-80': 42, '10-90': 42, '0-100': 42}
+    delta = 0.3161   start hour {'20-80': 152, '10-90': 152, '0-100': 152}
+    delta = 0.3360   start hour {'20-80': 119, '10-90': 119, '0-100': 119}
+  depths present in only some windows:
+    20-80 : 0.3539 (h95)
+    10-90 : 0.1539 (h95)
+    0-100 : 0.8962 (h100), 0.9416 (h141)
+
+  week statistics (week / annual mean per week):
+    10-90   cycles  15.5 / 14.892  ( +4.1%)   above delta_c  12.5 / 10.682  (+17.0%)
+    20-80   cycles  15.5 / 15.582  ( -0.5%)   above delta_c  12.5 / 10.740  (+16.4%)
+    0-100   cycles  12.5 / 12.360  ( +1.1%)   above delta_c  11.5 / 10.490  ( +9.6%)
+    20-100  cycles  15.5 / 14.010  (+10.6%)   above delta_c  12.5 / 10.682  (+17.0%)
+    0-80    cycles  13.5 / 13.338  ( +1.2%)   above delta_c  12.5 / 10.682  (+17.0%)
+
+OVERALL: PASS
+==============================================================================
