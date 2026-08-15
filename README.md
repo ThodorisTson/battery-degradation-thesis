@@ -232,8 +232,9 @@ _To be completed once the TU Delft repository record exists._
 
 ## Licence
 
-Apache 2.0, matching SHIPP, on which this work depends. SHIPP is installed as a
-dependency and is not redistributed here.
+Apache 2.0, chosen to match SHIPP so that code can move between the two
+repositories in either direction. SHIPP is installed as a dependency and is not
+redistributed here, so its licence imposes no requirement on this choice.
 
 ## Acknowledgements
 
