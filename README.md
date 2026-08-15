@@ -88,7 +88,25 @@ fall back to the SciPy sparse solver. That path does not support the
 depth-of-discharge constraint and is limited to roughly six months of
 simulation, so it reproduces the structure of the results but not their values.
 
-## The three investigations
+## Investigative approaches
+
+Chapter 3 defines one shared evaluation pipeline and three approaches built on
+it, differing in how the sizing decision couples to that pipeline.
+
+### The shared evaluation pipeline
+
+```bash
+python scripts/run_baseline.py
+```
+
+Solves the dispatch LP at a fixed design, passes the state-of-charge trajectory
+to the Xu and Shi degradation models, accumulates capacity fade over 20 years
+re-solving each year at the degraded capacity, and triggers replacement at the
+state-of-health threshold. The LP itself carries no degradation term.
+
+This is not one of the three approaches; it is what all three evaluate. Run
+alone at the 150 MW / 300 MWh reference design it gives the baseline results of
+Section 4.3, and it writes the trajectory and LP duals that Appendix C reads.
 
 ### 1. Parameter sweep, in two stages
 
@@ -104,9 +122,12 @@ Stage 2 fixes that size and sweeps the state-of-charge operating window:
 python scripts/run_window_sweep.py
 ```
 
-Both evaluate net present value with degradation priced in and without.
-Together they produce the headline result: accounting for degradation reduces
-the optimal battery size by roughly 30%. Runtime is several hours each.
+Stage 1 evaluates three scenarios per grid point: no degradation, Xu, and Shi.
+Stage 2 runs seven windows at the Xu optimum, all reported on Xu. The 30-70%
+window is skipped, because its polynomial fit returns an exponent of 0.908 and
+is therefore not convex. Together the stages give the headline result: the
+optimum moves from 800 MWh / 250 MW to 550 MWh / 175 MW, about 30%. Runtime is
+several hours each.
 
 ### 2. Monolithic non-linear program
 
@@ -114,22 +135,24 @@ the optimal battery size by roughly 30%. Runtime is several hours each.
 python scripts/run_nlp_monolithic.py --year 2022 --slot D43
 ```
 
-Solves dispatch and degradation as a single non-linear program. This is
-reported as a negative result: the rainflow degradation cost has a
-discontinuous gradient at cycle-topology boundaries, so the solver converges on
-only a minority of days, and apparent gains on the remainder are artefacts of
-premature termination. `--all-days` runs the full year.
+Solves one day of dispatch and degradation as a single nonlinear program,
+reported as a negative result. The degradation gradient is discontinuous
+wherever the cycle set re-pairs, so across the 356 active days of DK1 2022 the
+solver certifies an optimum on 185, or 52%. On 168 of those the dispatch is no
+better than the revenue-only LP, and 87% of the positive objective difference
+across the year comes from days that never converged. `--all-days` runs the
+full year.
 
-### 3. Nested architecture, inner loop
+### 3. Gradient-based sizing, analytical components only
 
-```bash
-python scripts/run_baseline.py
-```
+No run script: the sizing search is not implemented. What is implemented and
+verified are the components it would need, namely the frozen-dispatch capacity
+gradient, the per-timestep degradation sub-gradient, and the LP duals on the
+state-of-charge bounds. All three are checked against finite differences in
+`verification/` and reported in Appendix C.
 
-Runs the inner dispatch loop with degradation accounting over the 20-year
-project, re-solving each year at the degraded capacity, and computes the
-outer-loop gradient inputs. The outer loop itself is not closed and is
-identified as future work.
+What remains is the re-dispatch term and a step-size rule, both identified as
+future work.
 
 ## Results
 
