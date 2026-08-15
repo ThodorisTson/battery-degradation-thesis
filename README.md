@@ -163,15 +163,17 @@ without re-running anything.
 
 | Folder | Produced by |
 |---|---|
-| `results/baseline/xu/` | `run_baseline.py` |
-| `results/sizing_sweep/` | `run_sizing_sweep.py` |
-| `results/window_sweep/` | `run_window_sweep.py` |
-| `results/nlp_monolithic_all_days/` | `run_nlp_monolithic.py --all-days` |
-| `results/week_snapshot/` | `verification/verify_week_snapshot.py` |
-| `results/verification/` | `verification/` scripts |
+| `results/baseline/xu/`                   | `run_baseline.py`, `DEG_MODEL` set to Xu  |
+| `results/baseline/shi/`                  | `run_baseline.py`, `DEG_MODEL` set to Shi |
+| `results/sizing_sweep/`                  | `run_sizing_sweep.py`                     |
+| `results/window_sweep/`                  | `run_window_sweep.py`                     |
+| `results/nlp_monolithic_all_days/`       | `run_nlp_monolithic.py --all-days`        |
+| `results/week_snapshot/`                 | `verification/verify_week_snapshot.py`    |
+| `results/verification/`                  | `verification/` scripts                   |
 
-Re-running a script overwrites the committed output. Check `git status` before
-committing after a run.
+Re-running a script overwrites the committed output for the branch it runs on,
+and leaves the other branch untouched. Check `git status` before committing
+after a run.
 
 ## Figures
 
@@ -223,8 +225,10 @@ Provenance for the wind series is documented in the header of
 `docs/KNOWN_ISSUE_failed_error_check_solve_lp_pyomo.md` explains the
 "Failed error check in solve_lp_pyomo" warning that appears on every solve. It
 is a residual-check artefact of SHIPP's relaxed LP storage formulation.
-Revenue, NPV, and degradation are unaffected; raw cycle counts are inflated and
-should be treated as an upper bound.
+Revenue and NPV are unaffected, as both are computed from dispatch power rather
+than the energy trace. Phantom micro-cycles inflate the raw rainflow count by up
+to about 16% at small capacities, while changing annual degradation by less than
+0.25%. Raw cycle counts should be read as upper bounds.
 
 ## Citation
 
