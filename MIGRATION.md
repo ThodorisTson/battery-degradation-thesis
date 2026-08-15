@@ -90,10 +90,9 @@ Twenty-one import statements were rewritten across seven files by
 `tools/rename_imports.py`, which prints every change and runs as a dry run by
 default.
 
-Two modules previously located `WP2_Battery.yaml` by searching their own
-directory and its parent. Both now use `from degradation.paths import
-BATTERY_YAML`. The affected code is inside `if __name__ == "__main__"` blocks,
-so only the self-tests were touched.
+Two modules located `WP2_Battery.yaml` by searching their own directory and
+its parent. Both now use `from degradation.paths import BATTERY_YAML`. Only
+the self-tests were affected.
 
 One interactive `input()` prompt in `xu.py` was replaced with a default read
 from `config/battery.yaml`, so the self-test runs unattended.
@@ -141,9 +140,7 @@ traceable.
 **Not renamed:** the identifiers `deg_cost_planB`, `npv_bat_planB`, and the
 CSV and JSON keys `npv_bat_planB_EUR` and `npv_bat_planB_MEUR`. These are
 column headers in committed result files. Renaming them would break the link to
-data that cannot be regenerated before the defense. The quantity is the
-single-year extrapolation proxy, as against the full per-year multi-year
-assembly.
+data that cannot be regenerated before the defense.
 
 ---
 
@@ -206,10 +203,6 @@ Output directory names lost their spaces: `Plan B Results`, `Degradation
 Plots`, `RTE Tests` and `Outer Loop Tests` became `sizing_sweep`,
 `plots`, `baseline` and so on under `results/`.
 
-`load_dk1_prices()` in `run_nlp_monolithic.py` previously searched three
-directories for any `dk1_prices_<year>.csv`. It now maps year to path
-explicitly and names the available years when given one it does not have.
-
 **Figures are the exception.** Figure scripts write their output beside
 themselves rather than to a central directory, so `Path(__file__).parent` is
 correct there and was left in place.
@@ -226,7 +219,10 @@ a clean clone.
 | `figures/concept/` | self-contained: equations, synthetic traces, diagrams |
 | `figures/from_data/` | reads `config/` or `data/` |
 | `figures/from_results/` | reads `results/` |
-| `figures/external/` | no script (XDSM diagrams) |
+
+Every thesis figure has a generating script. The two XDSM diagrams (Figures 3.5
+and 3.12) are produced by `figures/concept/make_lp_nlp_xdsm.py`, so the
+originally planned `figures/external/` folder was not needed and was removed.
 
 Filenames do not encode figure numbers. Numbers move when chapters are edited,
 and a filename that names the wrong figure is worse than one that is vague. Two

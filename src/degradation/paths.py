@@ -5,7 +5,7 @@ location. Scripts can then be moved between folders without breaking, and
 the directory layout is described in one file rather than in eight.
 
 Usage:
-    from paths import CONFIG_DIR, DATA_DIR, results_dir
+    from degradation.paths import CONFIG_DIR, DATA_DIR, results_dir
 
     hpp_yaml  = CONFIG_DIR / "hpp.yaml"
     price_csv = DATA_DIR / "dk1_prices_2022.csv"

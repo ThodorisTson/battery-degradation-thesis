@@ -59,7 +59,7 @@ pip install -r requirements.txt
 Dependency versions are pinned to the environment that produced every result:
 Python 3.13, numpy 2.4.1, pandas 2.3.3, scipy 1.17.0, matplotlib 3.10.8,
 xarray 2025.12.0, pyomo 6.10.0, py_wake 2.6.18, rainflow 3.2.0, PyYAML 6.0.3,
-gurobipy 13.0.1.
+gurobipy 13.0.1, PyMuPDF 1.28.2, Pillow 12.3.0.
 
 Verify the installation:
 
@@ -160,7 +160,6 @@ run from a clean clone. Each writes its output beside itself.
 | `figures/concept/` | nothing: equations, synthetic traces, diagrams |
 | `figures/from_data/` | `config/` or `data/` |
 | `figures/from_results/` | `results/` |
-| `figures/external/` | no script; diagram sources only |
 
 Filenames do not encode figure numbers, since numbers move when chapters are
 edited. The mapping is below.
