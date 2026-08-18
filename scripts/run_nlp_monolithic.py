@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import json as _json
+from pathlib import Path
 import sys
 import time
 from datetime import datetime
@@ -350,7 +351,6 @@ def run_single_period(
     alpha: float | None = None,
     power_wind: np.ndarray | None = None,
     verbose: bool = True,
-    make_plots: bool = True,
 ) -> Dict:
     
     #Full LP → NLP pipeline for one price slice. This function is horizon-agnostic: it works identically whether "prices" contains 24, 168, 720, or 8760 hours.
@@ -559,7 +559,6 @@ def run_single_period(
         lp_data, nlp_result, prices, config,
         {"LP": lp_mats["t_lp"], "NLP": t_nlp},
         solver_info=solver_label, obj_scale=obj_scale, alpha=alpha,
-        make_plots=make_plots,
     )
 
     return nlp_result
@@ -572,7 +571,7 @@ def run_single_period(
 def _save_results(
     results_dir, prefix, year, period_label,
     lp_data, nlp_result, prices, config, timings,
-    solver_info="", obj_scale=1.0, alpha=None, make_plots=True,
+    solver_info="", obj_scale=1.0, alpha=None,
 ):
     results_dir.mkdir(exist_ok=True)
     T = len(prices)
@@ -648,116 +647,6 @@ def _save_results(
     if sac > 0:
         print(f"  Sacrifice: {sac:>+,.0f}  Saving: {sav:>+,.0f}  "
               f"Ratio: {sav/sac:.2f}x")
-
-    # ── 4. Comparison plot (3 panels) ─────────────────────────────────────
-    if not make_plots:
-        return
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-
-        fig, axes = plt.subplots(3, 1, figsize=(16, 10), sharex=True)
-        fig.patch.set_facecolor("#f7f9fc")
-        for ax in axes:
-            ax.set_facecolor("#f7f9fc")
-        fig.suptitle(
-            f"Path 3 ({solver_info})  |  DK1 {year} {period_label}",
-            fontsize=13, fontweight="bold",
-        )
-        hours = np.arange(T)
-
-        axes[0].plot(hours, prices, color="#2166ac", lw=0.5, alpha=0.8)
-        axes[0].set_ylabel("Price [EUR/MWh]")
-        axes[0].set_title("Day-Ahead Price", fontweight="bold")
-
-        axes[1].plot(hours, lp_data["e"][:T], color="#2166ac", lw=0.6,
-                     label="LP", alpha=0.8)
-        axes[1].plot(hours, nlp_result["e"][:T], color="#b5351b", lw=0.6,
-                     label="NLP", alpha=0.8)
-        axes[1].set_ylabel("Stored Energy [MWh]")
-        axes[1].set_title("Battery SoC", fontweight="bold")
-        axes[1].legend(fontsize=9)
-
-        diff = nlp_result["p"] - lp_data["p"]
-        axes[2].fill_between(hours, diff, 0, where=diff > 0,
-                             color="#2166ac", alpha=0.3, label="NLP > LP")
-        axes[2].fill_between(hours, diff, 0, where=diff < 0,
-                             color="#b5351b", alpha=0.3, label="NLP < LP")
-        axes[2].set_ylabel("Delta Power [MW]")
-        axes[2].set_xlabel("Hour")
-        axes[2].set_title("Dispatch Difference", fontweight="bold")
-        axes[2].legend(fontsize=9)
-
-        plt.tight_layout()
-        png = results_dir / f"{prefix}_comparison.png"
-        fig.savefig(png, dpi=150, bbox_inches="tight",
-                    facecolor="#f7f9fc", edgecolor="none")
-        plt.close(fig)
-        print(f"  Saved: {png.name}")
-
-        # ── 5. Convergence plot (4 panels) ────────────────────────────────
-        if len(history) > 2:
-            fig2, axes2 = plt.subplots(2, 2, figsize=(14, 9))
-            fig2.patch.set_facecolor("#f7f9fc")
-            for ax in axes2.flat:
-                ax.set_facecolor("#f7f9fc")
-            scale_tag = f"scale={obj_scale:.0f}" if obj_scale > 1 else "unscaled"
-            fig2.suptitle(
-                f"Convergence  |  DK1 {year} {period_label}  |  "
-                f"{solver_info}  |  {scale_tag}",
-                fontsize=13, fontweight="bold",
-            )
-
-            iters = [h["iter"] for h in history]
-            objs  = [h["obj"] for h in history]
-            cvs   = [h["cv"]  for h in history]
-            opts  = [h["optimality"] for h in history]
-            fdegs = [h["f_deg"] for h in history]
-
-            axes2[0,0].plot(iters, objs, color="#2166ac", lw=0.8)
-            axes2[0,0].set_ylabel("Objective (unscaled)")
-            axes2[0,0].set_title("Objective Value", fontweight="bold")
-            axes2[0,0].ticklabel_format(axis='y', style='scientific',
-                                        scilimits=(-3,3))
-
-            if len(objs) > 1:
-                dobj = np.abs(np.diff(objs))
-                dobj_safe = np.where(dobj > 0, dobj, 1e-20)
-                axes2[0,1].semilogy(iters[1:], dobj_safe,
-                                    color="#2166ac", lw=0.6, alpha=0.7)
-                axes2[0,1].set_ylabel("|ΔObj|")
-                axes2[0,1].set_title("Objective Change per Iter",
-                                     fontweight="bold")
-
-            opts_clean = [o for o in opts if o == o]  # drop NaN
-            if opts_clean:
-                axes2[1,0].semilogy(iters[:len(opts_clean)], opts_clean,
-                                    color="#b5351b", lw=0.8)
-                axes2[1,0].axhline(1e-6, ls='--', color='gray', lw=0.7,
-                                   label='tol=1e-6')
-                axes2[1,0].set_ylabel("Optimality")
-                axes2[1,0].set_title("KKT Optimality", fontweight="bold")
-                axes2[1,0].legend(fontsize=8)
-
-            axes2[1,1].plot(iters, fdegs, color="#2166ac", lw=0.8)
-            axes2[1,1].set_ylabel("f_deg")
-            axes2[1,1].set_title("Degradation Fraction", fontweight="bold")
-            axes2[1,1].ticklabel_format(axis='y', style='scientific',
-                                        scilimits=(-3,3))
-
-            for ax in axes2[1,:]:
-                ax.set_xlabel("Iteration")
-
-            plt.tight_layout()
-            conv_png = results_dir / f"{prefix}_convergence.png"
-            fig2.savefig(conv_png, dpi=150, bbox_inches="tight",
-                         facecolor="#f7f9fc", edgecolor="none")
-            plt.close(fig2)
-            print(f"  Saved: {conv_png.name}")
-
-    except Exception as exc:
-        print(f"  Plot failed: {exc}")
 
 
 # ══════════════════════════════════════════════════════════════════════════
@@ -1049,14 +938,14 @@ Examples:
         return None if wind_full is None else wind_full[h0:h1]
 
     def _run(prices_slice, wind_slice, label, pfx,
-             make_plots=True, out_dir=None, verbose=True):
+             out_dir=None, verbose=True):
         run_single_period(
             prices_slice, config, shi_fit, args.max_iter,
             out_dir or results_dir, pfx, args.year, label,
             solver=args.solver, tr_radius=args.tr_radius,
             use_scaling=use_scaling, hess_method=args.hess,
             alpha=args.alpha, power_wind=wind_slice,
-            make_plots=make_plots, verbose=verbose,
+            verbose=verbose,
         )
 
     # ── Synthetic test ────────────────────────────────────────────────────
@@ -1088,7 +977,7 @@ Examples:
             pfx = f"{timestamp}_{_RUNNER_NAME}_dk{args.year}_D{day+1:03d}_{solver_tag}"
             try:
                 _run(prices_full[h0:h1], _wind_slice(h0, h1), label, pfx,
-                     make_plots=False, out_dir=days_dir, verbose=False)
+                     out_dir=days_dir, verbose=False)
                 ok += 1
             except Exception as e:
                 failed.append(day + 1)
