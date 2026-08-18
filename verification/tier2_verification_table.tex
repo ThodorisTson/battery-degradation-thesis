@@ -1,0 +1,38 @@
+\begin{tabular}{llrrrl}
+\hline\noalign{\smallskip}
+Test & Quantity & Expected & Obtained & Rel. error & Status \\
+\noalign{\smallskip}\hline\noalign{\smallskip}
+T2.1 & min SoC level & 30 & 30 & 8.3e-16 & PASS \\
+T2.1 & max SoC level & 270 & 270 & 2.1e-16 & PASS \\
+T2.1 & SoC at the last returned step & -- & 30 & -- & INFO \\
+T2.1 & peak power magnitude & 150 & 150 & 0.0e+00 & PASS \\
+T2.1 & steps outside the power limit & 0 & 0 & 0.0e+00 & PASS \\
+T2.1 & weighted mean charge price & 40.8255 & 40.8255 & 0.0e+00 & PASS \\
+T2.1 & weighted mean discharge price & 159.295 & 159.295 & 0.0e+00 & PASS \\
+T2.1 & discharge / charge price ratio & -- & 3.90185 & -- & INFO \\
+T2.1 & energy discharged over the week & 1602.62 & 1602.62 & 1.4e-16 & PASS \\
+T2.1 & energy drawn to charge over the week & 1761.12 & 1761.12 & 1.3e-16 & PASS \\
+T2.1 & deep cycle count & 7 & 7 & 0.0e+00 & PASS \\
+T2.1 & deep cycle depth & 0.8 & 0.8 & 2.8e-16 & PASS \\
+T2.1 & deep cycle mean SoC & 0.5 & 0.5 & 0.0e+00 & PASS \\
+T2.1 & shallow rainflow records (delta <= 0.5) & -- & 0 & -- & INFO \\
+T2.2 & steps violating the SoC inequality & 0 & 0 & 0.0e+00 & PASS \\
+T2.2 & largest violation & 0 & 5.68434e-14 & 5.7e-14 & PASS \\
+T2.2 & steps with slack in the SoC balance & -- & 0 & -- & INFO \\
+T2.2 & energy discarded over the horizon & -- & 0 & -- & INFO \\
+T2.2 & idle steps strictly inside the window & -- & 0 & -- & INFO \\
+T2.2 & discarded energy as a share of energy drawn & 0 & 0 & 0.0e+00 & PASS \\
+T2.2 & delivered / drawn energy & 0.91 & 0.91 & 1.2e-16 & PASS \\
+T2.3 & discharge at price ratio 1.020 & 0 & 0 & 0.0e+00 & PASS \\
+T2.3 & discharge at price ratio 1.050 & 0 & 0 & 0.0e+00 & PASS \\
+T2.3 & discharge at price ratio 1.080 & 0 & 0 & 0.0e+00 & PASS \\
+T2.3 & discharge at price ratio 1.130 & 686.836 & 686.836 & 1.7e-16 & PASS \\
+T2.3 & discharge at price ratio 1.160 & 686.836 & 686.836 & 1.7e-16 & PASS \\
+T2.3 & discharge at price ratio 1.200 & 686.836 & 686.836 & 1.7e-16 & PASS \\
+T2.3 & discharge at price ratio 1.300 & 686.836 & 686.836 & 1.7e-16 & PASS \\
+T2.3 & ratios excluded as near-degenerate & -- & 0 & -- & INFO \\
+T2.3 & threshold lies above the last idle ratio & 1 & 1 & 0.0e+00 & PASS \\
+T2.3 & threshold lies at or below the first active ratio & 1 & 1 & 0.0e+00 & PASS \\
+T2.3 & predicted threshold 1/RTE & 1.0989 & 1.0989 & 1.6e-11 & PASS \\
+\noalign{\smallskip}\hline
+\end{tabular}
