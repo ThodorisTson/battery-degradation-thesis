@@ -49,9 +49,9 @@ from degradation.xu import (
     fc_cycle,                 # Xu per-cycle stress  S_delta * S_soc * S_temp
     phi_shi_with_stress,      # fitted Shi per-cycle  k3*delta^k4 * S_soc * S_temp
     compute_fd,               # full Xu fd: (fd, fd_cycle, fd_calendar)
-    fit_shi_polynomial,       # was re-exported by degradation_subgradient before
+    fit_shi_polynomial,       # was re-exported by degradation.subgradient before
                               # that module was rewritten; imported from its
-                              # defining module now. degradation_shi has an
+                              # defining module now. degradation.shi has an
                               # identical copy; this one matches the
                               # ShiPolynomialFit that compute_subgradient expects.
 )
@@ -521,7 +521,7 @@ def _run_multiyear(
                 dDeg_dDoD_yr, float(np.mean(np.abs(sg_yr["subgrad_combined"]))),
                 mean_dod_yr, float(np.mean(np.abs(dual_per_year_yr))),
                 float(e_cap_yr), float(np.mean(sg_yr["n_straddled"] > 0)),
-                # Was cycle_coverage from the attribution map, which the rewritten degradation_subgradient removed. The equivalent diagnostic in the
+                # Was cycle_coverage from the attribution map, which the rewritten degradation.subgradient removed. The equivalent diagnostic in the
                 # straddle construction is the share of timesteps at which at least one cycle straddles, i.e. at which the gradient is non-zero.
                 sg_yr["subgrad_combined"].copy(),
                 dRev_dEcap_yr, dDegCost_dEcap_yr, lambda_E_yr,

@@ -328,7 +328,7 @@ def test_counters_agree() -> None:
         b = cycles_as_tuples(rainflow_shi(trace, E_CAP))
         check("T1.3", f"identical records, {name}", len(a),
               sum(1 for x, y in zip(a, b) if x == y), "records",
-              note="degradation_xu vs degradation_shi")
+              note="degradation.xu vs degradation.shi")
 
 
 # =============================================================================

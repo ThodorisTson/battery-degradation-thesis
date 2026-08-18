@@ -9,8 +9,8 @@ Dry run first, read the report, then apply.
 Only import lines are touched. Every rewrite is printed with its file and
 line number so the diff can be checked before committing.
 
-Delete this file once the migration is complete.
-"""
+The import rewrite is finished. The script is kept for its second pass, which lists textual references to the old module names in comments and docstrings.
+Run it with no arguments; it writes nothing without --apply."""
 from __future__ import annotations
 
 import argparse
@@ -23,8 +23,7 @@ RENAMES = {
     "degradation_xu": "degradation.xu",
     "degradation_shi": "degradation.shi",
     "degradation_subgradient": "degradation.subgradient",
-    "degradation_plots_multiyear": "degradation.plots_multiyear",
-    "degradation_plots": "degradation.plots",
+    "degradation_plots": "degradation.reporting",
     "wp2_common": "degradation.site",
     "wp2_econ": "degradation.economics",
     "thesis_style": "degradation.style",
