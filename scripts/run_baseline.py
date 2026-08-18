@@ -37,7 +37,6 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 import numpy_financial as npf
 import pandas as pd
-import matplotlib.pyplot as plt
 import time
 
 from shipp.kernel import solve_lp_sparse
@@ -65,19 +64,10 @@ from degradation.shi import analyze_degradation_shi, phi_shi_prime_with_stress, 
 from degradation.subgradient import compute_subgradient
 from degradation.xu import fit_shi_polynomial
 
-from degradation.plots import (
-    plot_degradation_analysis,
-    print_degradation_report,
-)
+from degradation.plots import print_degradation_report
 
 import xarray as xr
 from py_wake.site import XRSite
-
-from degradation.plots_multiyear import (
-    plot_gradient_analysis,
-    plot_subgradient_timeseries,
-    plot_multiyear_trajectory,
-)
 
 # Single source of truth for all economic primitives
 from degradation.economics import (
@@ -111,7 +101,6 @@ if DEG_MODEL not in BRANCH_DIR_NAME:
     )
 
 RESULTS_DIR = results_dir(f"baseline/{BRANCH_DIR_NAME[DEG_MODEL]}")
-PLOTS_DIR   = results_dir(f"baseline/{BRANCH_DIR_NAME[DEG_MODEL]}/plots")
 
 discount_rate = 0.03   # real discount rate, 3% (see Section 3.2.2)
 dt            = 1.0    # hours
@@ -141,8 +130,6 @@ print_baseline_table = True
 print_degr_reports   = True
 SAVE_CSV             = True
 SAVE_REPORT          = True
-MAKE_PLOT            = True
-show_plots           = False
 
 run_ts  = datetime.now().strftime('%Y%m%d_%H%M%S')
 FILE_TAG = "baseline"   # rte value appended per run in _build_run_label
@@ -1507,57 +1494,6 @@ def main() -> None:
     ]
     np.save(RESULTS_DIR / f'multiyear_{run_label}.npy', _slim, allow_pickle=True)
     print(f'  ✓ multiyear_{run_label}.npy saved')
-    # ── Plots ─────────────────────────────────────────────────────────────
-    if MAKE_PLOT:
-        time_vec = np.arange(n) * dt / 24.0
-
-        # Power export + SoC overview
-        fig, ax = plt.subplots(1, 2, figsize=(12, 5))
-        ax[0].plot(time_vec, power_wind_MW + os_fixed.storage_p[0].data,
-                   linewidth=0.7, label="Wind + battery export")
-        ax[0].plot(time_vec, power_wind_MW,
-                   linewidth=0.7, alpha=0.6, label="Wind only")
-        ax[0].axhline(p_max_MW, linestyle="--", alpha=0.5,
-                      label=f"Grid limit ({p_max_MW:.0f} MW)")
-        ax[0].set_xlabel("Time [days]"); ax[0].set_ylabel("Power [MW]")
-        ax[0].legend(fontsize=8); ax[0].grid(True, alpha=0.3)
-        ax[1].plot(time_vec, os_fixed.storage_e[0].data, linewidth=0.7)
-        ax[1].set_xlabel("Time [days]"); ax[1].set_ylabel("SoC [MWh]")
-        ax[1].grid(True, alpha=0.3)
-        plt.tight_layout()
-        plt.savefig(PLOTS_DIR / f"battery_baseline_results_{run_label}.png", dpi=200)
-
-        # Single-year degradation detail
-        plot_degradation_analysis(
-            degr_fixed_shi,
-            storage_e=os_fixed.storage_e[0].data,
-            time_vec=time_vec,
-            save_path=str(PLOTS_DIR / f"battery_degradation_analysis_fixed_{run_label}.png"),
-            show=False, verbose=True, eol_thresholds=eol_thresholds,
-        )
-        if degr_opt is not None:
-            plot_degradation_analysis(
-                degr_opt,
-                storage_e=os.storage_e[0].data,
-                time_vec=time_vec,
-                save_path=str(PLOTS_DIR / f"battery_degradation_analysis_sizing_{run_label}.png"),
-                show=False, verbose=True, eol_thresholds=eol_thresholds,
-            )
-
-        # Multi-year trajectory + gradient plots
-        plot_multiyear_trajectory(multiyear, run_label,
-            plots_dir=PLOTS_DIR, n_years=N_YEARS,
-            eol_replacement=EOL_REPLACEMENT, show=show_plots)
-        plot_gradient_analysis(multiyear, run_label,
-            plots_dir=PLOTS_DIR, n_years=N_YEARS, show=show_plots)
-        plot_subgradient_timeseries(multiyear, run_label,
-            plots_dir=PLOTS_DIR, show=show_plots)
-
-        if show_plots:
-            plt.show()
-        else:
-            plt.close("all")
-
     print("\n" + "=" * 80)
     print(f"✓ COMPLETE — {FILE_TAG} (single window | wp2_econ | EUR | per-year NPV)")
     print("=" * 80)
