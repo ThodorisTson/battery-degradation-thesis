@@ -53,7 +53,7 @@ Public API
     compute_fd_shi(cycles, p, T_C)       accumulated fd_shi
     shi_capacity_loss(fd_shi, p)         SEI capacity loss (Option B)
     shi_capacity_curve(fd_values, p)     retention % curve for plotting
-    build_half_cycle_map(cycles, e)      timestep → half-cycle attribution
+    build_half_cycle_map(cycles, e)      timestep → half-cycle attribution [SUPERSEDED]
     compute_subgradient(...)             Shi Eqs. 17-18 per-timestep gradient
     analyze_degradation_shi(...)         main analysis API (drop-in compatible)
 """
@@ -466,7 +466,17 @@ def shi_capacity_curve(fd_values: np.ndarray, p: ShiModelParams) -> np.ndarray:
 # =============================================================================
 # Subgradient engine — Shi et al. (2018) Eqs. 17-18
 # =============================================================================
-
+# SUPERSEDED, retained for the record.
+#
+# build_half_cycle_map and the compute_subgradient below implement the half-cycle attribution map: every timestep is assigned to one owning cycle.
+# They were replaced on 16 July 2026 by the exact spanning-set construction in degradation/subgradient.py, whose module docstring sets out why the
+# attribution map cannot reproduce the partition Shi et al. define. The short form: the rainflow library reports each cycle as a pair of adjacent
+# reversals, so a full cycle's second leg lies inside the following segment and no index interval can express it.
+#
+# Nothing in the repository imports either function. They are kept because every result produced before 16 July used them, including the superseded
+# gradient figures the current Appendix C.3 compares against.
+#
+# For new work use degradation.subgradient.compute_subgradient.
 def build_half_cycle_map(
     cycles:    List[Dict],
     storage_e: List[float],

@@ -2,8 +2,7 @@
 Exact per-timestep sub-gradient of the rainflow degradation cost.
 ================================================================
 
-Replaces build_half_cycle_map + compute_subgradient in subgradient.py.
-
+Replaces build_half_cycle_map + compute_subgradient, previously in shi.py and retained there, unused, for the record.
 Why the attribution map had to go
 ---------------------------------
 Shi et al. define index sets T_{v_i} and T_{w_j} that partition the horizon into half-cycle legs. The rainflow library reports each cycle as a pair of ADJACENT

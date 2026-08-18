@@ -64,7 +64,7 @@ from degradation.shi import analyze_degradation_shi, phi_shi_prime_with_stress, 
 from degradation.subgradient import compute_subgradient
 from degradation.xu import fit_shi_polynomial
 
-from degradation.plots import print_degradation_report
+from degradation.reporting import print_degradation_report
 
 import xarray as xr
 from py_wake.site import XRSite
@@ -88,7 +88,7 @@ from degradation.paths import HPP_YAML, PRICE_CSV_2019, PRICE_CSV_2022, results_
 # CONFIG
 # =============================================================================
 
-PRICE_CSV = PRICE_CSV_2022          # switch to PRICE_CSV_2022 for the 2022 price year
+PRICE_CSV = PRICE_CSV_2022          # switch to PRICE_CSV_2019 for the 2019 price year
 
 # Degradation model: "shi" (fitted Phi + Xu calendar, fast) or "xu" (full Xu, about twice the runtime). Declared here because the output folder is keyed
 # on it: a Shi run and an Xu run of the same case produce files with identical names, so they must not share a directory.

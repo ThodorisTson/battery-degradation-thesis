@@ -41,11 +41,9 @@ File structure
 This file contains ONLY the physical model — parameters, stress factors,
 degradation accumulation, rainflow counting, and the main analysis API.
 Plotting and reporting have been moved to:
-    plots.py — plot_degradation_analysis, print_degradation_report,
-                           validate_xu_dst
+    reporting.py — print_degradation_report, validate_xu_dst
 The subgradient interface (Shi et al. 2018) lives in:
-    subgradient.py — build_half_cycle_map, compute_subgradient
-
+    subgradient.py — compute_subgradient, rainflow_depth_sensitivity
 Public API
 ----------
     analyze_degradation(storage_p, storage_e, e_cap_nominal,

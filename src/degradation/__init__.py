@@ -11,8 +11,7 @@ subgradient      Exact per-timestep sub-gradient of the rainflow degradation
 site             Wind resource, turbine, and wake model setup.
 economics        Discounting, capex, and revenue conventions shared by every
                  run script.
-plots            Single-year degradation figures.
-plots_multiyear  Lifetime trajectory figures.
+reporting        Console report of a single-year degradation result.
 style            Shared matplotlib styling for thesis figures.
 paths            Repository paths. Import from here rather than building
                  paths relative to a script.
