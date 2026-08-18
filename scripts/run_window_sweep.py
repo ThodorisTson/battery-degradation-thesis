@@ -78,7 +78,6 @@ from degradation.paths import (
 
 PRICE_CSV   = PRICE_CSV_2022        # switch to PRICE_CSV_2019 for the 2019 price year
 RESULTS_DIR = make_results_dir("window_sweep")
-PLOTS_DIR   = make_results_dir("window_sweep/plots")
 
 discount_rate = 0.03
 dt            = 1.0
