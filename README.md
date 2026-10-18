@@ -232,7 +232,7 @@ to about 16% at small capacities, while changing annual degradation by less than
 
 ## Citation
 
-_To be completed once the TU Delft repository record exists._
+(https://repository.tudelft.nl/record/uuid:356c069e-9e7b-4ca1-8d70-3b0e789f8d42)
 
 ## Licence
 
